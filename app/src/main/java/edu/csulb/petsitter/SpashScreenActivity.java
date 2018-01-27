@@ -13,7 +13,7 @@ public class SpashScreenActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         setTheme(R.style.SplashTheme);
         super.onCreate(savedInstanceState);
-        Intent intent = new Intent(this, UserAuthenticationContainer.class);
+        Intent intent = new Intent(this, MainActivityContainer.class);
         intent.setAction(UserAuthenticationContainer.LOGIN_USER_ACTION);
         startActivity(intent);
     }
