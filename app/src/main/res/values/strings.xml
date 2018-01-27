@@ -31,6 +31,13 @@
     <string name="incorrect_email_format">This email is not valid</string>
     <string name="incorrect_password_format">Password minimum 8 characters (a&#8211;z, A&#8211;Z, 0&#8211;9)</string>
 
+    <!-- String related to Main Activity -->
+    <string name="inbox">Inbox</string>
+    <string name="profile">Profile</string>
+    <string name="favorite">Favorite</string>
+    <string name="history">History</string>
+    <string name="find">Find</string>
+
     <!-- Other Strings -->
     <string name="wallpaper">wallpaper</string>
     <string name="facebook_app_id">570891646594040</string>
@@ -40,4 +47,10 @@
     <string name="aws_cognito_client_id">5s8cbvu4ltdcqg28r1e0r2nb4m</string>
     <string name="aws_cognito_client_secret">miokebr21nbk702qho9vocki3r09umm8ikfdu3kbmc5dirsk618</string>
     <string name="aws_identity_pool_id">us-east-1:953952f4-9f26-4d0d-896d-67f14b0ae141</string>
+    <string name="title_activity_main">MainActivity</string>
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Notifications</string>
+
+
 </resources>
