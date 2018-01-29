@@ -271,15 +271,12 @@ public class LoginFragment extends Fragment
         createAccountTextView = (TextView) getActivity().findViewById(R.id.create_account_text);
         forgotPasswordTextView = (TextView) getActivity().findViewById(R.id.forgot_password_text);
 
-        //Debug
-        emailInputEditText.setText("danielkimstudent@hotmail.com");
-        passwordInputEditText.setText("Isobarkim1");
-
         //Initialize Listeners
         googleSignInButton.setOnClickListener(this);
         signInButton.setOnClickListener(this);
         createAccountTextView.setOnClickListener(this);
         forgotPasswordTextView.setOnClickListener(this);
+
     }
 
     @Override

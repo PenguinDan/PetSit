@@ -32,7 +32,7 @@ public class UserAuthenticationContainer extends Activity
         setContentView(R.layout.activity_user_authentication_container);
 
         //Retrieve instances and make checks
-        GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(this);
+        GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(getApplicationContext());
         AWSMobileClient.getInstance().initialize(this).execute();
 
         //Create User Pool Object
@@ -43,6 +43,7 @@ public class UserAuthenticationContainer extends Activity
 
         //Check why this activity was started
         createAndStartFragment(getIntent().getAction());
+
     }
 
     private void createAndStartFragment(String action) {
