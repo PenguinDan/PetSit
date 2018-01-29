@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.media.FaceDetector;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -19,6 +20,10 @@ import android.widget.TextView;
 import com.amazonaws.ClientConfiguration;
 import com.amazonaws.auth.AnonymousAWSCredentials;
 import com.amazonaws.auth.CognitoCachingCredentialsProvider;
+import com.amazonaws.mobile.auth.core.IdentityManager;
+import com.amazonaws.mobile.auth.facebook.FacebookSignInProvider;
+import com.amazonaws.mobile.auth.google.GoogleSignInProvider;
+import com.amazonaws.mobile.config.AWSConfiguration;
 import com.amazonaws.mobileconnectors.cognitoidentityprovider.CognitoUserPool;
 import com.amazonaws.mobileconnectors.cognitoidentityprovider.CognitoUserSession;
 import com.amazonaws.mobileconnectors.cognitoidentityprovider.exceptions.CognitoInternalErrorException;
@@ -268,7 +273,6 @@ public class LoginFragment extends Fragment
                 Regions.US_EAST_1
         );
 
-
         //Initialize Views
         SignInButton googleSignInButton = (SignInButton) getActivity().findViewById(R.id.sign_in_button_google);
         emailInputEditText = (EditText) getActivity().findViewById(R.id.email_edit_text);
@@ -279,6 +283,13 @@ public class LoginFragment extends Fragment
         ImageButton facebookLoginButton = (ImageButton) getActivity().findViewById(R.id.facebook_login_button);
 
         //Configure Facebook Sign In
+        FacebookSignInProvider.setPermissions("public_profile", "email");
+        IdentityManager.getDefaultIdentityManager().addSignInProvider(FacebookSignInProvider.class);
+
+
+        //Configure Google Sign In
+        GoogleSignInProvider.setPermissions("profile", "email", "openid");
+        IdentityManager.getDefaultIdentityManager().addSignInProvider(GoogleSignInProvider.class);
 
         //Initialize Listeners
         signInButton.setOnClickListener(this);
