@@ -2,8 +2,10 @@ package edu.csulb.petsitter;
 
 import android.app.Activity;
 import android.app.FragmentTransaction;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 import com.amazonaws.ClientConfiguration;
 import com.amazonaws.mobile.client.AWSMobileClient;
@@ -20,6 +22,7 @@ public class UserAuthenticationContainer extends Activity
     //Variables
     private CognitoUserPool cognitoUserPool;
     //Constants
+    private final static String TAG = "UserAuthContainer";
     public final static String USER_EMAIL = "UE";
     public final static String USER_PASSWORD = "UP";
     public final static String LOGIN_USER_ACTION = "LUA";
@@ -44,6 +47,15 @@ public class UserAuthenticationContainer extends Activity
         //Check why this activity was started
         createAndStartFragment(getIntent().getAction());
 
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(loginFragment.isHandlingSignIn()) {
+            loginFragment.onActivityResult(requestCode, resultCode, data);
+        } else {
+            super.onActivityResult(requestCode, resultCode, data);
+        }
     }
 
     private void createAndStartFragment(String action) {

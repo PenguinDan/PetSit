@@ -1,12 +1,9 @@
 package edu.csulb.petsitter;
 
-import android.accounts.Account;
-import android.accounts.AccountManager;
 import android.app.AlertDialog;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -43,25 +40,11 @@ import com.amazonaws.services.cognitoidentityprovider.model.RespondToAuthChallen
 import com.amazonaws.services.cognitoidentityprovider.model.RespondToAuthChallengeResult;
 import com.amazonaws.util.Base64;
 import com.amazonaws.util.StringUtils;
-import com.facebook.CallbackManager;
-import com.facebook.FacebookCallback;
-import com.facebook.FacebookException;
-import com.facebook.login.LoginManager;
-import com.facebook.login.LoginResult;
-import com.google.android.gms.auth.GoogleAuthException;
-import com.google.android.gms.auth.GoogleAuthUtil;
-import com.google.android.gms.auth.api.signin.GoogleSignIn;
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.SignInButton;
-import com.google.android.gms.common.api.ApiException;
-import com.google.android.gms.tasks.Task;
 
-import java.io.IOException;
 import java.math.BigInteger;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
@@ -84,12 +67,9 @@ public class LoginFragment extends Fragment
     //Variables
     private OnButtonClicked onButtonClickedListener;
     private CognitoCachingCredentialsProvider credentialsProvider;
-    private CallbackManager callbackManager;
+    private boolean currentlySigningIn;
     //Constants
     private final String TAG = "LoginFragment";
-    private final String FACEBOOK_LOGIN_KEY = "graph.facebook.com";
-    private final String GOOGLE_LOGIN_KEY = "accounts.google.com";
-    private static final int RC_SIGN_IN = 9001;
     //Interfaces
     public interface OnButtonClicked {
         void buttonClicked(String reason);
@@ -281,46 +261,12 @@ public class LoginFragment extends Fragment
         super.onActivityCreated(savedInstanceState);
 
         //Initialize Variables
+        currentlySigningIn = false;
         credentialsProvider = new CognitoCachingCredentialsProvider(
                 getActivity(),
                 getString(R.string.aws_identity_pool_id),
                 Regions.US_EAST_1
         );
-
-        //Configure sign-in to request the User's ID, email address, and basic profile
-        //ID and basic profile are included in DEFAULT_SIGN_IN
-        GoogleSignInOptions googleSignInOptions = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestEmail().build();
-        //Build a GoogleSignInClient with the options specified by googleSignInOptions
-        googleSignInClient = GoogleSignIn.getClient(getActivity(), googleSignInOptions);
-
-        //Configure Facebook Sign In
-        callbackManager = CallbackManager.Factory.create();
-        LoginManager.getInstance().registerCallback(callbackManager,
-                new FacebookCallback<LoginResult>() {
-                    @Override
-                    public void onSuccess(LoginResult loginResult) {
-                        //User has successfully logged in
-                        Log.d(TAG, "LoginManager : onSuccess : User Has successfully logged in");
-                        //Add session token to Amazon Cognito Provider
-                        Map<String, String> logins = new HashMap<>();
-                        logins.put(FACEBOOK_LOGIN_KEY, loginResult.getAccessToken().getToken());
-                        credentialsProvider.setLogins(logins);
-                        credentialsProvider.refresh();
-                        Log.d(TAG, "LoginManager : onSuccess : userId : " + credentialsProvider.getIdentityId());
-                    }
-
-                    @Override
-                    public void onCancel() {
-                        //User has canceled
-                        Log.d(TAG, "LoginManager: onCancel : User has canceled");
-                    }
-
-                    @Override
-                    public void onError(FacebookException error) {
-                        Log.d(TAG, "LoginManager: onError : User has Error");
-                    }
-                });
 
 
         //Initialize Views
@@ -332,26 +278,12 @@ public class LoginFragment extends Fragment
         TextView forgotPasswordTextView = (TextView) getActivity().findViewById(R.id.forgot_password_text);
         ImageButton facebookLoginButton = (ImageButton) getActivity().findViewById(R.id.facebook_login_button);
 
+        //Configure Facebook Sign In
+
         //Initialize Listeners
-        googleSignInButton.setOnClickListener(this);
         signInButton.setOnClickListener(this);
         createAccountTextView.setOnClickListener(this);
         forgotPasswordTextView.setOnClickListener(this);
-        facebookLoginButton.setOnClickListener(this);
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if (requestCode == RC_SIGN_IN) {
-            //Result returned from launching the Intent from GoogleSignInClient.getSignInIntent(...);
-            Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
-            handleSignInResult(task);
-        } else {
-            //Result returned from launching the Intent from Facebook
-            callbackManager.onActivityResult(requestCode, resultCode, data);
-        }
     }
 
     //User is attempting to sign in using their email and password
@@ -360,39 +292,6 @@ public class LoginFragment extends Fragment
         final String userPassword = passwordInputEditText.getText().toString();
 
         new CognitoHelper().execute(userEmail, userPassword);
-    }
-
-    //Attempt to sign in with google
-    private void signInGoogle() {
-        Intent signInIntent = googleSignInClient.getSignInIntent();
-        startActivityForResult(signInIntent, RC_SIGN_IN);
-    }
-
-    //Handles Google's sign in
-    private void handleSignInResult(Task<GoogleSignInAccount> completedTask) {
-        try {
-            GoogleSignInAccount account = completedTask.getResult(ApiException.class);
-            //Signed in successfully
-            AccountManager accountManager = AccountManager.get(getActivity());
-            Account[] accounts = accountManager.getAccountsByType(GoogleAuthUtil.GOOGLE_ACCOUNT_TYPE);
-            String token = GoogleAuthUtil.getToken(getActivity(), accounts[0],
-                    getString(R.string.google_web_client_id));
-            Map<String, String> logins = new HashMap<String, String>();
-            logins.put(GOOGLE_LOGIN_KEY, token);
-            credentialsProvider.setLogins(logins);
-
-        } catch (ApiException ex) {
-            // The ApiException status code indicates the detailed failure reason.
-            // Please refer to the GoogleSignInStatusCodes class reference for more information.
-            Log.w(TAG, "signInResult:failed code=" + ex.getStatusCode());
-            ex.printStackTrace();
-        } catch(GoogleAuthException exception) {
-            Log.w(TAG, "signInResult: failed : ");
-            exception.printStackTrace();
-        } catch(IOException exception) {
-            Log.w(TAG, "signInResult: failed: ");
-            exception.printStackTrace();
-        }
     }
 
     public void setCognitoUserPool(CognitoUserPool cognitoUserPool) {
@@ -409,6 +308,7 @@ public class LoginFragment extends Fragment
 
     @Override
     public void onClick(View view) {
+        currentlySigningIn = true;
         switch (view.getId()) {
             case R.id.sign_in_button: {
                 Log.d(TAG, "Normal Sign In Chosen");
@@ -441,15 +341,6 @@ public class LoginFragment extends Fragment
                 }
             }
             break;
-            case R.id.sign_in_button_google: {
-                Log.d(TAG, "Sign in With Google Pressed");
-                signInGoogle();
-            }
-            break;
-            case R.id.facebook_login_button: {
-                LoginManager.getInstance()
-                        .logInWithReadPermissions(getActivity(), Arrays.asList("public_profile", "email"));
-            }
             case R.id.create_account_text: {
                 onButtonClickedListener.buttonClicked("create_account");
             }
@@ -477,6 +368,10 @@ public class LoginFragment extends Fragment
             }
         });
         return alertDialogBuilder.create();
+    }
+
+    public boolean isHandlingSignIn() {
+        return currentlySigningIn;
     }
 }
 
