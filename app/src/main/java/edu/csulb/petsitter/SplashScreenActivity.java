@@ -8,7 +8,7 @@ import android.os.Bundle;
  * Created by Daniel on 1/13/2018.
  */
 
-public class SplashScreenActivity extends Activity {
+public class SpashScreenActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setTheme(R.style.SplashTheme);
