@@ -37,6 +37,7 @@
     <string name="favorite">Favorite</string>
     <string name="history">History</string>
     <string name="find">Find</string>
+    <string name="dates">Dates</string>
 
     <!-- Other Strings -->
     <string name="wallpaper">wallpaper</string>
@@ -51,6 +52,7 @@
     <string name="title_home">Home</string>
     <string name="title_dashboard">Dashboard</string>
     <string name="title_notifications">Notifications</string>
+    <string name="show_result">Show Result</string>
 
 
 </resources>
