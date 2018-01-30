@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.media.FaceDetector;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -81,6 +82,7 @@ public class LoginFragment extends Fragment
     private AWSConfiguration awsConfiguration;
     //Constants
     private final String TAG = "LoginFragment";
+
     //Interfaces
     public interface OnButtonClicked {
         void buttonClicked(String reason);
@@ -230,7 +232,7 @@ public class LoginFragment extends Fragment
             Log.d(TAG, "onPostExecute");
             alertDialog.dismiss();
 
-            if(!loginSuccess) {
+            if (!loginSuccess) {
                 Log.d(TAG, "onPostExecute: Login Failure");
                 AlertDialog errorDialog = createLoginErrorDialog();
                 errorDialog.show();
@@ -317,26 +319,30 @@ public class LoginFragment extends Fragment
 
         //Initialize Facebook Sign in
         FacebookSignInProvider facebookSignInProvider = new FacebookSignInProvider();
-        facebookSignInProvider.initialize(getActivity().getApplicationContext(), awsConfiguration);
-        facebookSignInProvider.initializeSignInButton(
+        facebookLoginButton.setOnClickListener(facebookSignInProvider.initializeSignInButton(
                 getActivity(),
                 facebookLoginButton,
                 identityManager.getResultsAdapter()
-        );
+        ));
 
-        //Initialize Google Sign in
-        GoogleSignInProvider googleSignInProvider = new GoogleSignInProvider();
-        googleSignInProvider.initialize(getActivity().getApplicationContext(), awsConfiguration);
-        googleSignInProvider.initializeSignInButton(
-                getActivity(),
-                googleSignInButton,
-                identityManager.getResultsAdapter()
-        );
+//        //Initialize Google Sign in
+//        GoogleSignInProvider googleSignInProvider = new GoogleSignInProvider();
+//        googleSignInProvider.initialize(getActivity().getApplicationContext(), awsConfiguration);
+//        googleSignInProvider.initializeSignInButton(
+//                getActivity(),
+//                googleSignInButton,
+//                identityManager.getResultsAdapter()
+//        );
 
         //Initialize Listeners
         signInButton.setOnClickListener(this);
         createAccountTextView.setOnClickListener(this);
         forgotPasswordTextView.setOnClickListener(this);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
     //User is attempting to sign in using their email and password
@@ -411,8 +417,8 @@ public class LoginFragment extends Fragment
     }
 
     private AlertDialog createLoginErrorDialog() {
-       AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
-       alertDialogBuilder.setTitle("Error");
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
+        alertDialogBuilder.setTitle("Error");
         alertDialogBuilder.setMessage("Email and Password combination not found");
         alertDialogBuilder.setNeutralButton("Ok", new DialogInterface.OnClickListener() {
             @Override
