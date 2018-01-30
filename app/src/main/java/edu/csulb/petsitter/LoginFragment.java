@@ -1,5 +1,6 @@
 package edu.csulb.petsitter;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Fragment;
 import android.content.Context;
@@ -21,6 +22,10 @@ import com.amazonaws.ClientConfiguration;
 import com.amazonaws.auth.AnonymousAWSCredentials;
 import com.amazonaws.auth.CognitoCachingCredentialsProvider;
 import com.amazonaws.mobile.auth.core.IdentityManager;
+import com.amazonaws.mobile.auth.core.IdentityProvider;
+import com.amazonaws.mobile.auth.core.SignInResultHandler;
+import com.amazonaws.mobile.auth.core.signin.SignInManager;
+import com.amazonaws.mobile.auth.core.signin.SignInProviderResultHandler;
 import com.amazonaws.mobile.auth.facebook.FacebookSignInProvider;
 import com.amazonaws.mobile.auth.google.GoogleSignInProvider;
 import com.amazonaws.mobile.config.AWSConfiguration;
@@ -73,6 +78,7 @@ public class LoginFragment extends Fragment
     private OnButtonClicked onButtonClickedListener;
     private CognitoCachingCredentialsProvider credentialsProvider;
     private boolean currentlySigningIn;
+    private AWSConfiguration awsConfiguration;
     //Constants
     private final String TAG = "LoginFragment";
     //Interfaces
@@ -272,6 +278,33 @@ public class LoginFragment extends Fragment
                 getString(R.string.aws_identity_pool_id),
                 Regions.US_EAST_1
         );
+        awsConfiguration = new AWSConfiguration(getActivity().getApplicationContext());
+
+        //Setup IdentityManager
+        SignInResultHandler signInResultHandler = new SignInResultHandler() {
+            @Override
+            public void onSuccess(Activity callingActivity, IdentityProvider provider) {
+                Log.d(TAG, "SignInResultHandler->onSuccess");
+            }
+
+            @Override
+            public void onIntermediateProviderCancel(Activity callingActivity, IdentityProvider provider) {
+                Log.d(TAG, "SignInResultHandler->onIntermediateProviderCancel");
+            }
+
+            @Override
+            public void onIntermediateProviderError(Activity callingActivity, IdentityProvider provider, Exception ex) {
+                Log.d(TAG, "SignInResultHandler->onIntermediateProviderError");
+            }
+
+            @Override
+            public boolean onCancel(Activity callingActivity) {
+                Log.d(TAG, "SignInResultHandler->onCancel");
+                return false;
+            }
+        };
+        IdentityManager identityManager = IdentityManager.getDefaultIdentityManager();
+        identityManager.login(getActivity(), signInResultHandler);
 
         //Initialize Views
         SignInButton googleSignInButton = (SignInButton) getActivity().findViewById(R.id.sign_in_button_google);
@@ -282,14 +315,23 @@ public class LoginFragment extends Fragment
         TextView forgotPasswordTextView = (TextView) getActivity().findViewById(R.id.forgot_password_text);
         ImageButton facebookLoginButton = (ImageButton) getActivity().findViewById(R.id.facebook_login_button);
 
-        //Configure Facebook Sign In
-        FacebookSignInProvider.setPermissions("public_profile", "email");
-        IdentityManager.getDefaultIdentityManager().addSignInProvider(FacebookSignInProvider.class);
+        //Initialize Facebook Sign in
+        FacebookSignInProvider facebookSignInProvider = new FacebookSignInProvider();
+        facebookSignInProvider.initialize(getActivity().getApplicationContext(), awsConfiguration);
+        facebookSignInProvider.initializeSignInButton(
+                getActivity(),
+                facebookLoginButton,
+                identityManager.getResultsAdapter()
+        );
 
-
-        //Configure Google Sign In
-        GoogleSignInProvider.setPermissions("profile", "email", "openid");
-        IdentityManager.getDefaultIdentityManager().addSignInProvider(GoogleSignInProvider.class);
+        //Initialize Google Sign in
+        GoogleSignInProvider googleSignInProvider = new GoogleSignInProvider();
+        googleSignInProvider.initialize(getActivity().getApplicationContext(), awsConfiguration);
+        googleSignInProvider.initializeSignInButton(
+                getActivity(),
+                googleSignInButton,
+                identityManager.getResultsAdapter()
+        );
 
         //Initialize Listeners
         signInButton.setOnClickListener(this);
