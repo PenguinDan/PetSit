@@ -51,6 +51,7 @@ public class UserAuthenticationContainer extends Activity
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Log.d(TAG, "onActivityResult");
         if(loginFragment.isHandlingSignIn()) {
             loginFragment.onActivityResult(requestCode, resultCode, data);
         } else {

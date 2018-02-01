@@ -51,11 +51,14 @@ import com.amazonaws.services.cognitoidentityprovider.model.RespondToAuthChallen
 import com.amazonaws.services.cognitoidentityprovider.model.RespondToAuthChallengeResult;
 import com.amazonaws.util.Base64;
 import com.amazonaws.util.StringUtils;
+import com.facebook.login.LoginManager;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.common.SignInButton;
 
 import java.math.BigInteger;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
@@ -80,8 +83,11 @@ public class LoginFragment extends Fragment
     private CognitoCachingCredentialsProvider credentialsProvider;
     private boolean currentlySigningIn;
     private AWSConfiguration awsConfiguration;
+    private AlertDialog loginDialog;
+    private FacebookSignInProvider facebookSignInProvider;
     //Constants
-    private final String TAG = "LoginFragment";
+    private final static String TAG = "LoginFragment";
+    private final static int RC_GOOGLE_SIGN_IN = 9001;
 
     //Interfaces
     public interface OnButtonClicked {
@@ -318,12 +324,12 @@ public class LoginFragment extends Fragment
         ImageButton facebookLoginButton = (ImageButton) getActivity().findViewById(R.id.facebook_login_button);
 
         //Initialize Facebook Sign in
-        FacebookSignInProvider facebookSignInProvider = new FacebookSignInProvider();
-        facebookLoginButton.setOnClickListener(facebookSignInProvider.initializeSignInButton(
+        facebookSignInProvider = new FacebookSignInProvider();
+        facebookSignInProvider.initializeSignInButton(
                 getActivity(),
                 facebookLoginButton,
                 identityManager.getResultsAdapter()
-        ));
+        );
 
 //        //Initialize Google Sign in
 //        GoogleSignInProvider googleSignInProvider = new GoogleSignInProvider();
@@ -338,10 +344,23 @@ public class LoginFragment extends Fragment
         signInButton.setOnClickListener(this);
         createAccountTextView.setOnClickListener(this);
         forgotPasswordTextView.setOnClickListener(this);
+        facebookLoginButton.setOnClickListener(this);
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Log.d(TAG, "onActivityResult");
+        //Creates the Login Dialog and displays it to the user
+        loginDialog = createLoginDialog();
+        loginDialog.show();
+
+        if(requestCode == RC_GOOGLE_SIGN_IN) {
+
+        } else {
+            //User has logged in with Facebook
+
+        }
+
         super.onActivityResult(requestCode, resultCode, data);
     }
 
@@ -367,10 +386,10 @@ public class LoginFragment extends Fragment
 
     @Override
     public void onClick(View view) {
-        currentlySigningIn = true;
         switch (view.getId()) {
             case R.id.sign_in_button: {
                 Log.d(TAG, "Normal Sign In Chosen");
+                currentlySigningIn = true;
                 //Check if the EditText boxes empty
                 boolean error = false;
                 String errorMessage = "";
@@ -402,6 +421,12 @@ public class LoginFragment extends Fragment
             break;
             case R.id.create_account_text: {
                 onButtonClickedListener.buttonClicked("create_account");
+            }
+            break;
+            case R.id.facebook_login_button: {
+                currentlySigningIn = true;
+                LoginManager.getInstance().logInWithReadPermissions(getActivity(),
+                        Arrays.asList("public_profile", "email"));
             }
             break;
         }
