@@ -51,6 +51,7 @@ import com.amazonaws.services.cognitoidentityprovider.model.RespondToAuthChallen
 import com.amazonaws.services.cognitoidentityprovider.model.RespondToAuthChallengeResult;
 import com.amazonaws.util.Base64;
 import com.amazonaws.util.StringUtils;
+import com.facebook.FacebookSdk;
 import com.facebook.login.LoginManager;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.common.SignInButton;
@@ -77,17 +78,19 @@ public class LoginFragment extends Fragment
     private EditText passwordInputEditText;
     //Log in
     private GoogleSignInClient googleSignInClient;
+    private CognitoCachingCredentialsProvider credentialsProvider;
     private CognitoUserPool cognitoUserPool;
+    private SignInManager signInManager;
+    private FacebookSignInProvider facebookSignInProvider;
+    private GoogleSignInProvider googleSignInProvider;
     //Variables
     private OnButtonClicked onButtonClickedListener;
-    private CognitoCachingCredentialsProvider credentialsProvider;
     private boolean currentlySigningIn;
     private AWSConfiguration awsConfiguration;
     private AlertDialog loginDialog;
-    private FacebookSignInProvider facebookSignInProvider;
     //Constants
     private final static String TAG = "LoginFragment";
-    private final static int RC_GOOGLE_SIGN_IN = 9001;
+    private final static int RC_GOOGLE_SIGN_IN = 16723;
 
     //Interfaces
     public interface OnButtonClicked {
@@ -259,6 +262,51 @@ public class LoginFragment extends Fragment
         }
     }
 
+    private class SignInResultHandlerImpl implements SignInProviderResultHandler {
+        /**
+         * Sign-in was successful
+         *
+         * @param provider sign-in identity provider
+         */
+        @Override
+        public void onSuccess(IdentityProvider provider) {
+            Log.i(TAG, "SignInResultHandlerImpl->onSuccess");
+
+            //Sign in manager is no longer needed because the user is signed in
+            SignInManager.dispose();
+            final SignInResultHandler signInResultHandler = signInManager.getResultHandler();
+
+            //Call back the results handler
+            signInResultHandler.onSuccess(getActivity(), provider);
+        }
+
+        /**
+         * Sign-in failed.
+         *
+         * @param provider sign-in identity provider
+         * @param ex       exception that occurred
+         */
+        @Override
+        public void onError(IdentityProvider provider, Exception ex) {
+            Log.i(TAG, "SignInResultHandlerImpl->onError");
+
+            signInManager.getResultHandler()
+                    .onIntermediateProviderError(getActivity(), provider, ex);
+        }
+
+        /**
+         * Sign-in was cancelled by the user.
+         *
+         * @param provider sign-in identity provider
+         */
+        @Override
+        public void onCancel(IdentityProvider provider) {
+            Log.i(TAG, "SignInResultHandlerImpl->onCancel");
+
+            signInManager.getResultHandler().onIntermediateProviderCancel(getActivity(), provider);
+        }
+    }
+
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -312,7 +360,12 @@ public class LoginFragment extends Fragment
             }
         };
         IdentityManager identityManager = IdentityManager.getDefaultIdentityManager();
+        //Initializes SignInManager instance and sets SignInManager.setResultHandler()
         identityManager.login(getActivity(), signInResultHandler);
+
+        //Setup SignInManager and sets IdentityManager.setProviderResultsHandler()
+        signInManager = SignInManager.getInstance();
+        signInManager.setProviderResultsHandler(getActivity(), new SignInResultHandlerImpl());
 
         //Initialize Views
         SignInButton googleSignInButton = (SignInButton) getActivity().findViewById(R.id.sign_in_button_google);
@@ -332,13 +385,17 @@ public class LoginFragment extends Fragment
         );
 
 //        //Initialize Google Sign in
-//        GoogleSignInProvider googleSignInProvider = new GoogleSignInProvider();
+//        googleSignInProvider = new GoogleSignInProvider();
 //        googleSignInProvider.initialize(getActivity().getApplicationContext(), awsConfiguration);
 //        googleSignInProvider.initializeSignInButton(
 //                getActivity(),
 //                googleSignInButton,
 //                identityManager.getResultsAdapter()
 //        );
+
+        //Reset the OnClickListener for the federated login buttons to implement custom flow
+        facebookLoginButton.setOnClickListener(this);
+        googleSignInButton.setOnClickListener(this);
 
         //Initialize Listeners
         signInButton.setOnClickListener(this);
@@ -350,15 +407,19 @@ public class LoginFragment extends Fragment
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         Log.d(TAG, "onActivityResult");
-        //Creates the Login Dialog and displays it to the user
-        loginDialog = createLoginDialog();
-        loginDialog.show();
+        if(currentlySigningIn) {
+            //Creates the Login Dialog and displays it to the user
+            loginDialog = createLoginDialog();
+            loginDialog.show();
 
-        if(requestCode == RC_GOOGLE_SIGN_IN) {
+            //The user has finished *their* sign in process
+            currentlySigningIn = false;
 
-        } else {
-            //User has logged in with Facebook
-
+            if (requestCode == RC_GOOGLE_SIGN_IN) {
+                googleSignInProvider.handleActivityResult(requestCode, resultCode, data);
+            } else if (FacebookSdk.isFacebookRequestCode(requestCode)) {
+                facebookSignInProvider.handleActivityResult(requestCode, resultCode, data);
+            }
         }
 
         super.onActivityResult(requestCode, resultCode, data);
