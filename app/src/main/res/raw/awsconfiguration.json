@@ -1,1 +1,42 @@
-{"UserAgent":"MobileHub/1.0","Version":"1.0","CredentialsProvider":{"CognitoIdentity":{"Default":{"PoolId":"us-east-1:953952f4-9f26-4d0d-896d-67f14b0ae141","Region":"us-east-1"}}},"IdentityManager":{"Default":{}},"CognitoUserPool":{"Default":{"PoolId":"us-east-1_tTnZBkKYZ","AppClientId":"79oq7ignb7ml7qqr8n0k2le2p","AppClientSecret":"1jdchr80bjt9airnr312pnnecvmjhuue9niugi8ag6ddahicqnoi","Region":"us-east-1"}},"PinpointAnalytics":{"Default":{"AppId":"3cd2d6578ff84f80b21a30a1d3d6f8aa","Region":"us-east-1"}},"PinpointTargeting":{"Default":{"Region":"us-east-1"}},"GoogleSignIn":{"ClientId-WebApp":"74987655246-1r4fecq8u4anaca8c1atqo0j9f1q6euk.apps.googleusercontent.com","Permissions":"email,profile,openid"},"FacebookSignIn":{"AppId":"570891646594040","Permissions":"public_profile"}}
+{
+  "UserAgent": "MobileHub/1.0",
+  "Version": "1.0",
+  "CredentialsProvider": {
+    "CognitoIdentity": {
+      "Default": {
+        "PoolId": "us-east-1:953952f4-9f26-4d0d-896d-67f14b0ae141",
+        "Region": "us-east-1"
+      }
+    }
+  },
+  "IdentityManager": {
+    "Default": {}
+  },
+  "CognitoUserPool": {
+    "Default": {
+      "PoolId": "us-east-1_HecjjXia7",
+      "AppClientId": "5s8cbvu4ltdcqg28r1e0r2nb4m",
+      "AppClientSecret": "miokebr21nbk702qho9vocki3r09umm8ikfdu3kbmc5dirsk618",
+      "Region": "us-east-1"
+    }
+  },
+  "PinpointAnalytics": {
+    "Default": {
+      "AppId": "3cd2d6578ff84f80b21a30a1d3d6f8aa",
+      "Region": "us-east-1"
+    }
+  },
+  "PinpointTargeting": {
+    "Default": {
+      "Region": "us-east-1"
+    }
+  },
+  "GoogleSignIn": {
+    "ClientId-WebApp": "74987655246-1r4fecq8u4anaca8c1atqo0j9f1q6euk.apps.googleusercontent.com",
+    "Permissions": "email,profile,openid"
+  },
+  "FacebookSignIn": {
+    "AppId": "570891646594040",
+    "Permissions": "public_profile"
+  }
+}

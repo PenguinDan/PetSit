@@ -2,9 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://E:\GitHub\PetSitter\PetSit.iml" filepath="E:\GitHub\PetSitter\PetSit.iml" />
       <module fileurl="file://$PROJECT_DIR$/PetSitter.iml" filepath="$PROJECT_DIR$/PetSitter.iml" />
-      <module fileurl="file://C:\Users\Danie\Documents\GitHubLocal\PetSit\PetSitter.iml" filepath="C:\Users\Danie\Documents\GitHubLocal\PetSit\PetSitter.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>

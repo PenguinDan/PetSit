@@ -172,7 +172,7 @@
         style="?android:attr/borderlessButtonStyle"/>
 
     <com.google.android.gms.common.SignInButton
-        android:id="@+id/sign_in_button_google"
+        android:id="@+id/google_login_button"
         android:layout_width="210dp"
         android:layout_height="50dp"
         android:layout_gravity="center"
