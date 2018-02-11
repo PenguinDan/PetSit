@@ -51,10 +51,11 @@ public class CreateAccountFragment extends Fragment
     CognitoUserPool cognitoUserPool;
     private boolean accountCreated;
     //Interface
-    public interface OnCreateAccountClicked{
-        void onClick(String email, String password);
+    public interface OnAccountCreatedListener{
+        void onAccountCreated(CognitoUser cognitoUser);
+        void onCreateAccountFinished();
     }
-    private OnCreateAccountClicked createAccountClickedListener;
+    private OnAccountCreatedListener onAccountCreatedListener;
     //Handlers
     private TextWatcher textWatcher = new TextWatcher() {
         @Override
@@ -81,6 +82,8 @@ public class CreateAccountFragment extends Fragment
             //Check if the user needs to be confirmed
             if (!userConfirmed) {
                 Log.d(TAG, "onSuccess: userNotConfirmed");
+                //Send CognitoUser object to the container to hold it
+                onAccountCreatedListener.onAccountCreated(cognitoUser);
                 // This user must be confirmed and a confirmation code was sent to the user
                 // cognitoUserCodeDeliveryDetails will indicate where the confirmation code was sent
                 // Get the confirmation code from user
@@ -185,9 +188,8 @@ public class CreateAccountFragment extends Fragment
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 if (accountCreated) {
-                    createAccountClickedListener.onClick(emailEditText.getText().toString(),
-                            passwordEditText.getText().toString());
                     getActivity().getFragmentManager().popBackStack();
+                    onAccountCreatedListener.onCreateAccountFinished();
                 } else {
                     //Maybe automatically set the cursor back to the empty input area and make the
                     //soft-keyboard show
@@ -298,9 +300,8 @@ public class CreateAccountFragment extends Fragment
         }
     }
 
-    public void setCreateAccountClickedListener(OnCreateAccountClicked createAccountClickedListener) {
-        this.createAccountClickedListener = createAccountClickedListener;
+    public void setOnAccountCreatedListener(OnAccountCreatedListener onAccountCreatedListener) {
+        this.onAccountCreatedListener = onAccountCreatedListener;
     }
-
 }
 

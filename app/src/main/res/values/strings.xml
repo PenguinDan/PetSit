@@ -31,6 +31,10 @@
     <string name="incorrect_email_format">This email is not valid</string>
     <string name="incorrect_password_format">Password minimum 8 characters (a&#8211;z, A&#8211;Z, 0&#8211;9)</string>
 
+    <!-- String related to Code Verification -->
+    <string name="verify_code_hint">Received Code</string>
+    <string name="verify_code_text">Please enter the code that you have received</string>
+
     <!-- String related to Main Activity -->
     <string name="inbox">Inbox</string>
     <string name="profile">Profile</string>
@@ -41,6 +45,7 @@
 
     <!-- Other Strings -->
     <string name="wallpaper">wallpaper</string>
+    <string name="confirm_text">Confirm</string>
     <string name="facebook_app_id">570891646594040</string>
     <string name="fb_login_protocol_scheme">fb570891646594040</string>
     <string name="google_auth_scope">74987655246-tflg2mjv2f1lnf2is7ms5uos7ld65meh.apps.googleusercontent.com </string>
