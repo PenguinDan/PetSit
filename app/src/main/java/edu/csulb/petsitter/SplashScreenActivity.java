@@ -53,7 +53,7 @@ public class SplashScreenActivity extends Activity {
             }
         });
 
-        Intent intent = new Intent(this, UserAuthenticationContainer.class);
+        Intent intent = new Intent(this, MainActivityContainer.class);
         intent.setAction(UserAuthenticationContainer.LOGIN_USER_ACTION);
         startActivity(intent);
     }
