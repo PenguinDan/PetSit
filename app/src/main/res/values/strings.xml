@@ -22,10 +22,10 @@
     <string name="or_sign_in_with">or sign in with</string>
 
     <!-- String related to Create Account -->
-    <string name="first_name">First Name</string>
-    <string name="last_name">Last Name</string>
-    <string name="confirm_password">Confirm Password</string>
-    <string name="create_account">Create Account</string>
+    <string name="first_name">First name</string>
+    <string name="last_name">Last name</string>
+    <string name="confirm_password">Confirm password</string>
+    <string name="create_account">Create account</string>
     <string name="invalid_confirm_password">Passwords do not equal.</string>
     <string name="email_already_exists">Email already exists.</string>
     <string name="incorrect_email_format">This email is not valid</string>
@@ -45,11 +45,18 @@
 
     <!-- String related to profile fragment -->
     <string name="view_and_edit_profile">View and edit profile</string>
-    <string name="settings">Settings</string>
-    <string name="become_a_host">Become a host</string>
-    <string name="notifications">Notifications</string>
-    <string name="feed_back">Give us feedback</string>
+    <string name="settings">\t\t\tSettings</string>
+    <string name="become_a_host">\t\t\tBecome a host</string>
+    <string name="notifications">\t\t\tNotifications</string>
+    <string name="feed_back">\t\t\tGive us feedback</string>
     <string name="line_seperator_description">Line seperator for each of the selectable option</string>
+
+    <!-- String related to settings fragment -->
+    <string name="currency">\t\t\tCurrency</string>
+    <string name="payment_method">\t\t\tPayment Method</string>
+    <string name="terms_of_service">\t\t\tTerms of Service</string>
+    <string name="version">\t\t\tVersion 1.0</string>
+    <string name="log_out">\t\t\tLog out</string>
 
     <!-- Other Strings -->
     <string name="wallpaper">wallpaper</string>
@@ -67,6 +74,8 @@
     <string name="title_notifications">Notifications</string>
     <string name="show_result">Show Result</string>
     <string name="clear">Clear</string>
+    <string name="edit_profile">Edit profile</string>
+    <string name="change_password">Change password</string>
 
 
 </resources>
