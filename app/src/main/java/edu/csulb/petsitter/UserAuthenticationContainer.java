@@ -9,6 +9,7 @@ import android.util.Log;
 
 import com.amazonaws.ClientConfiguration;
 import com.amazonaws.mobile.client.AWSMobileClient;
+import com.amazonaws.mobileconnectors.cognitoidentityprovider.CognitoUser;
 import com.amazonaws.mobileconnectors.cognitoidentityprovider.CognitoUserPool;
 import com.amazonaws.regions.Regions;
 import com.google.android.gms.common.GoogleApiAvailability;
@@ -21,6 +22,7 @@ public class UserAuthenticationContainer extends Activity
         implements LoginFragment.OnButtonClicked{
     //Variables
     private CognitoUserPool cognitoUserPool;
+    private CognitoUser cognitoUser;
     //Constants
     private final static String TAG = "UserAuthContainer";
     public final static String USER_EMAIL = "UE";
@@ -28,6 +30,7 @@ public class UserAuthenticationContainer extends Activity
     public final static String LOGIN_USER_ACTION = "LUA";
     public final static String CREATE_ACCOUNT_ACTION = "CAA";
     private final LoginFragment loginFragment = new LoginFragment();
+    private VerifyCodeFragment verifyCodeFragment = new VerifyCodeFragment();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -51,6 +54,7 @@ public class UserAuthenticationContainer extends Activity
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Log.d(TAG, "onActivityResult");
         if(loginFragment.isHandlingSignIn()) {
             loginFragment.onActivityResult(requestCode, resultCode, data);
         } else {
@@ -77,12 +81,21 @@ public class UserAuthenticationContainer extends Activity
             case "create_account":{
                 CreateAccountFragment createAccountFragment = new CreateAccountFragment();
                 createAccountFragment.setCognitoUserPool(cognitoUserPool);
-                createAccountFragment.setCreateAccountClickedListener(new CreateAccountFragment.OnCreateAccountClicked() {
+                createAccountFragment.setOnAccountCreatedListener(new CreateAccountFragment.OnAccountCreatedListener() {
                     @Override
-                    public void onClick(String email, String password) {
-                        loginFragment.setUserEmailEditText(email);
-                        loginFragment.setUserPasswordEditText(password);
+                    public void onAccountCreated(CognitoUser receivedCognitoUser) {
+                        cognitoUser = receivedCognitoUser;
                     }
+                    @Override
+                    public void onCreateAccountFinished() {
+                        FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+                        verifyCodeFragment.setCognitoUser(cognitoUser);
+                        fragmentTransaction.replace(R.id.user_authentication_container, verifyCodeFragment);
+                        fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+                        fragmentTransaction.addToBackStack(null);
+                        fragmentTransaction.commit();
+                    }
+
                 });
                 fragmentTransaction.replace(R.id.user_authentication_container, createAccountFragment);
                 fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);

@@ -39,7 +39,7 @@ dependencies {
     androidTestImplementation 'com.android.support.test:runner:1.0.1'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
     implementation('com.amazonaws:aws-android-sdk-mobile-client:2.6.7@aar') { transitive = true; }
-    compile 'com.android.support:support-v4:27.0.0'
+    compile 'com.android.support:support-v4:27.0.2'
     compile 'com.github.HappyLyfe123:CalendarListview:v1.2.4'
     compile 'de.hdodenhof:circleimageview:2.2.0'
 }
