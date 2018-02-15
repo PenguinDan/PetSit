@@ -33,6 +33,7 @@ dependencies {
     implementation 'com.amazonaws:aws-android-sdk-auth-core:2.6.13'
     implementation 'com.amazonaws:aws-android-sdk-auth-userpools:2.6.13'
     implementation 'com.amazonaws:aws-android-sdk-cognitoidentityprovider:2.6.13'
+    implementation 'com.amazonaws:aws-android-sdk-cognito:2.6.13'
     implementation 'com.amazonaws:aws-android-sdk-auth-google:2.6.13'
     implementation 'com.amazonaws:aws-android-sdk-auth-facebook:2.6.13'
     testImplementation 'junit:junit:4.12'

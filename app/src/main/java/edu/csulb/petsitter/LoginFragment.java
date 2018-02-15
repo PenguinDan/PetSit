@@ -35,6 +35,8 @@ import com.amazonaws.mobile.auth.core.signin.SignInProviderResultHandler;
 import com.amazonaws.mobile.auth.facebook.FacebookSignInProvider;
 import com.amazonaws.mobile.auth.google.GoogleSignInProvider;
 import com.amazonaws.mobile.config.AWSConfiguration;
+import com.amazonaws.mobileconnectors.cognito.CognitoSyncManager;
+import com.amazonaws.mobileconnectors.cognitoidentityprovider.CognitoUser;
 import com.amazonaws.mobileconnectors.cognitoidentityprovider.CognitoUserPool;
 import com.amazonaws.mobileconnectors.cognitoidentityprovider.CognitoUserSession;
 import com.amazonaws.mobileconnectors.cognitoidentityprovider.exceptions.CognitoInternalErrorException;
@@ -225,12 +227,14 @@ public class LoginFragment extends Fragment
                     CognitoAccessToken cognitoAccessToken = new CognitoAccessToken(authenticationResultType.getAccessToken());
                     CognitoRefreshToken cognitoRefreshToken = new CognitoRefreshToken(authenticationResultType.getRefreshToken());
                     CognitoUserSession cognitoUserSession = new CognitoUserSession(cognitoIdToken, cognitoAccessToken, cognitoRefreshToken);
-                    Log.d(TAG, "onPostExecute : Login Successful");
-                    //Retrieve id token from CognitoUserSession
+
                     String idToken = cognitoUserSession.getIdToken().getJWTToken();
-                    //Create a credentials provider, or use the existing provider
                     Map<String, String> logins = new HashMap<>();
-                    loginSuccess = true;
+                    logins.put(credentialsProvider.getIdentityPoolId(), idToken);
+                    credentialsProvider.setLogins(logins);
+
+                    onIdentityResult();
+                    Log.d(TAG, "onPostExecute : Login Successful");
                 } catch (NotAuthorizedException notAuthorizedException) {
                     Log.w(TAG, "Wrong password or username");
                 }
@@ -318,7 +322,6 @@ public class LoginFragment extends Fragment
                                     .withLogins(credentialsProvider.getLogins());
                             GetCredentialsForIdentityResult credentialsForIdentityResult =
                                     amazonCognitoIdentityClient.getCredentialsForIdentity(credentialsForIdentityRequest);
-
                             onIdentityResult();
                         }
                     });
@@ -373,6 +376,10 @@ public class LoginFragment extends Fragment
         getActivity().finish();
     }
 
+    /**
+     *
+     * @param context
+     */
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);

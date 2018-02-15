@@ -9,9 +9,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.widget.Button;
 
+import com.amazonaws.auth.CognitoCachingCredentialsProvider;
+import com.amazonaws.mobileconnectors.cognitoidentityprovider.CognitoUser;
+
 public class MainActivityContainer extends AppCompatActivity {
 
     Button filterDateButton;
+    //Cognito
+    private CognitoUser cognitoUser;
 
     //BottomNavigationBar item select listener
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener =
