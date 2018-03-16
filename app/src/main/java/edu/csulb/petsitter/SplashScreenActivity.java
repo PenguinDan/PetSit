@@ -3,14 +3,15 @@ package edu.csulb.petsitter;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
-import com.amazonaws.mobile.auth.core.IdentityManager;
-import com.amazonaws.mobile.auth.core.StartupAuthResult;
-import com.amazonaws.mobile.auth.core.StartupAuthResultHandler;
-import com.amazonaws.mobile.auth.facebook.FacebookSignInProvider;
-import com.amazonaws.mobile.auth.google.GoogleSignInProvider;
-import com.amazonaws.mobile.config.AWSConfiguration;
+import com.amazonaws.mobileconnectors.cognitoidentityprovider.CognitoUser;
+import com.amazonaws.mobileconnectors.cognitoidentityprovider.CognitoUserPool;
+import com.amazonaws.regions.Regions;
+import com.facebook.AccessToken;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 
 /**
  * Created by Danie on 1/28/2018.
@@ -18,51 +19,67 @@ import com.amazonaws.mobile.config.AWSConfiguration;
 
 public class SplashScreenActivity extends Activity {
     //Constants
-    private final static String TAG  = "SplashScreenActivity";
+    private final static String TAG = SplashScreenActivity.class.getSimpleName();
+    //Cognito login variables
+    private CognitoUserPool cognitoUserPool;
+
+
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        setTheme(R.style.SplashTheme);
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        AWSConfiguration awsConfiguration = new AWSConfiguration(getApplicationContext());
+        //Initialize CognitoUserPool object
+        cognitoUserPool = new CognitoUserPool(
+                this,
+                getResources().getString(R.string.cognito_pool_id),
+                getResources().getString(R.string.application_client_id),
+                getResources().getString(R.string.application_client_secret),
+                Regions.US_WEST_2
+        );
 
-        //Check if the Identity Manager has been created
-        if(IdentityManager.getDefaultIdentityManager() == null) {
-            IdentityManager identityManager = new IdentityManager(getApplicationContext(),
-                    awsConfiguration);
-            IdentityManager.setDefaultIdentityManager(identityManager);
+        //Check if the user has already signed in before
+        if (userIsSignedIn()) {
+            //Move to main activity because the user is already signed in
+            Log.d(TAG, "onCreate: User is already signed in, moving to main activity");
+            Intent moveToMainIntent = new Intent(this, MainActivityContainer.class);
+            startActivity(moveToMainIntent);
+        } else {
+            //Send intent to start the login activity
+            Log.d(TAG, "onCreate: User is not signed in, moving to authentication activity");
+            Intent loginIntent = new Intent(this, UserAuthenticationContainer.class);
+            loginIntent.setAction(UserAuthenticationContainer.START_LOGIN_ACTION);
+            startActivity(loginIntent);
         }
-
-        //Configure Facebook Sign In
-        FacebookSignInProvider.setPermissions("public_profile", "email");
-        IdentityManager.getDefaultIdentityManager().addSignInProvider(FacebookSignInProvider.class);
-        //Configure Google Sign In
-        GoogleSignInProvider.setPermissions("profile", "email", "openid");
-        IdentityManager.getDefaultIdentityManager().addSignInProvider(GoogleSignInProvider.class);
-
-        //Resume the Identity Manager session if any
-        IdentityManager.getDefaultIdentityManager().resumeSession(this, new StartupAuthResultHandler() {
-            @Override
-            public void onComplete(final StartupAuthResult authResults) {
-                if(authResults.isUserSignedIn()) {
-                    Log.d(TAG, "onComplete : User is signed in with " +
-                    authResults.getIdentityManager().getCurrentIdentityProvider().getDisplayName());
-                    //Begin the main activity because the user is already signed in
-                    Intent intent = new Intent(SplashScreenActivity.this, MainActivityContainer.class);
-                    startActivity(intent);
-                } else {
-                    Log.d(TAG, "onComplete : User is not signed in.");
-                    //Begin the login activity where the user has to sign in
-                    Intent intent = new Intent(SplashScreenActivity.this, UserAuthenticationContainer.class);
-                    intent.setAction(UserAuthenticationContainer.LOGIN_USER_ACTION);
-                    startActivity(intent);
-                }
-            }
-        });
     }
 
+    /**
+     * Checks if the user is currently already signed in with an account used before
+     *
+     * @return True if the user is already signed in and false otherwise
+     */
+    private boolean userIsSignedIn() {
+        if (GoogleSignIn.getLastSignedInAccount(this) != null) {
+            GoogleSignInAccount googleSignInAccount = GoogleSignIn.getLastSignedInAccount(this);
+            Log.d(TAG, "userIsSignedIn: Google sign in: " + googleSignInAccount.getEmail());
+            return true;
+        } else if (cognitoUserPool.getCurrentUser() != null) {
+            CognitoUser cognitoUser = cognitoUserPool.getCurrentUser();
+            Log.d(TAG, "userIsSignedIn: Normal sign in: " + cognitoUser.getUserId());
+            return true;
+        } else if (AccessToken.getCurrentAccessToken() != null) {
+            AccessToken facebookAccessToken = AccessToken.getCurrentAccessToken();
+            Log.d(TAG, "userIsSignedIn: Facebook sign in: " + facebookAccessToken.getUserId());
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Right when the activity goes out of sight, pop it from the stack
+     */
     @Override
-    protected void onStop(){
+    protected void onStop() {
         super.onStop();
         finish();
     }

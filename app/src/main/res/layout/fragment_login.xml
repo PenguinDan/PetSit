@@ -70,7 +70,7 @@
     </android.support.design.widget.TextInputLayout>
 
     <Button
-        android:id="@+id/sign_in_button"
+        android:id="@+id/button_normal_login"
         android:layout_width="305dp"
         android:layout_height="47dp"
         android:layout_gravity="center"
@@ -98,8 +98,8 @@
         android:text="@string/create_new_account"
         android:textColor="@color/white"
         android:textSize="14sp"
-        app:layout_constraintStart_toStartOf="@+id/sign_in_button"
-        app:layout_constraintTop_toBottomOf="@+id/sign_in_button" />
+        app:layout_constraintStart_toStartOf="@+id/button_normal_login"
+        app:layout_constraintTop_toBottomOf="@+id/button_normal_login" />
 
     <TextView
         android:id="@+id/forgot_password_text"
@@ -113,8 +113,8 @@
         android:text="@string/forgot_password"
         android:textColor="@color/white"
         android:textSize="14sp"
-        app:layout_constraintEnd_toEndOf="@+id/sign_in_button"
-        app:layout_constraintTop_toBottomOf="@+id/sign_in_button" />
+        app:layout_constraintEnd_toEndOf="@+id/button_normal_login"
+        app:layout_constraintTop_toBottomOf="@+id/button_normal_login" />
 
     <View
         android:id="@+id/right_separator_social_media"
@@ -143,7 +143,7 @@
         android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/sign_in_button" />
+        app:layout_constraintTop_toBottomOf="@+id/button_normal_login" />
 
     <View
         android:id="@+id/left_separator_social_media"
