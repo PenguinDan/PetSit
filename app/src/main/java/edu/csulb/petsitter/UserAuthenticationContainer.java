@@ -9,7 +9,6 @@ import android.util.Log;
 
 import com.amazonaws.mobileconnectors.cognitoidentityprovider.CognitoUser;
 import com.amazonaws.mobileconnectors.cognitoidentityprovider.CognitoUserPool;
-import com.amazonaws.regions.Regions;
 
 /**
  * Created by Daniel on 1/14/2018.
@@ -30,7 +29,6 @@ public class UserAuthenticationContainer extends Activity
         FORGOT_PASSWORD,
         CREATE_ACCOUNT,
         VERIFY_CODE,
-        MOVE_TO_ACTIVITY
     }
 
     //Fragments
@@ -45,13 +43,7 @@ public class UserAuthenticationContainer extends Activity
         setContentView(R.layout.activity_user_authentication_container);
 
         //Initialize variables
-        cognitoUserPool = new CognitoUserPool(
-                this,
-                getResources().getString(R.string.cognito_pool_id),
-                getResources().getString(R.string.application_client_id),
-                getResources().getString(R.string.application_client_secret),
-                Regions.US_WEST_2
-        );
+        cognitoUserPool = CognitoHelper.getCognitoUserPool(this);
 
         //Initialize Login Fragment
         loginFragment = new LoginFragment();

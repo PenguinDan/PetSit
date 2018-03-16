@@ -1,11 +1,11 @@
 package edu.csulb.petsitter;
 
+import android.app.AlertDialog;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AlertDialog;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -17,20 +17,20 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.amazonaws.mobileconnectors.cognitoidentityprovider.CognitoDevice;
 import com.amazonaws.mobileconnectors.cognitoidentityprovider.CognitoUser;
 import com.amazonaws.mobileconnectors.cognitoidentityprovider.CognitoUserAttributes;
 import com.amazonaws.mobileconnectors.cognitoidentityprovider.CognitoUserCodeDeliveryDetails;
 import com.amazonaws.mobileconnectors.cognitoidentityprovider.CognitoUserPool;
 import com.amazonaws.mobileconnectors.cognitoidentityprovider.handlers.SignUpHandler;
-import com.amazonaws.services.cognitoidentityprovider.model.DeviceType;
 import com.amazonaws.services.cognitoidentityprovider.model.UsernameExistsException;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * Created by Daniel on 2/24/2018.
+ */
 
 public class CreateAccountFragment extends Fragment
         implements View.OnClickListener {
@@ -56,7 +56,9 @@ public class CreateAccountFragment extends Fragment
         void onCreateAccountFinished();
     }
     private OnAccountCreatedListener onAccountCreatedListener;
-    //Handlers
+    /**
+     * Event watcher that calls the updateButton() method to see if it should activate or not
+     */
     private TextWatcher textWatcher = new TextWatcher() {
         @Override
         public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -73,6 +75,9 @@ public class CreateAccountFragment extends Fragment
 
         }
     };
+    /**
+     * Handler that receives successful or failed results from the user creating an account
+     */
     SignUpHandler signupCallback = new SignUpHandler() {
         @Override
         public void onSuccess(CognitoUser cognitoUser, boolean userConfirmed,
@@ -110,9 +115,7 @@ public class CreateAccountFragment extends Fragment
             if(exception instanceof UsernameExistsException) {
                 Log.d(TAG, "Email already exists : " + emailEditText.getText().toString());
                 progressBar.setVisibility(View.GONE);
-                builder.setTitle("Error");
-                builder.setMessage("The email has already been registered.");
-                builder.show();
+                displayErrorMessage("Email already exists.");
             }
         }
     };
@@ -198,6 +201,14 @@ public class CreateAccountFragment extends Fragment
         });
     }
 
+    /**
+     * Calls the CognitoUserPool API to create a user account
+     *
+     * @param firstName The user's first name
+     * @param lastName The user's last name
+     * @param emailAddress The user's email address
+     * @param password The user's password
+     */
     private void createUserAccount(String firstName, String lastName, String emailAddress, String password) {
         CognitoUserAttributes userAttributes = new CognitoUserAttributes();
 
@@ -210,7 +221,13 @@ public class CreateAccountFragment extends Fragment
 
     }
 
-    //Checks the user's password every time to prevent dictionary attacks
+    /**
+     * Checks the user's password to make sure it is strong enough to prevent dictionary attacks
+     *
+     * @param password The user's desired password
+     *
+     * @return True if the password is strong enough and false otherwise
+     */
     private boolean passwordGuidelineCheck(String password) {
         /**
          * Passwords must contain at least one a-z character, one A-Z character
@@ -221,6 +238,13 @@ public class CreateAccountFragment extends Fragment
         return matcher.matches();
     }
 
+    /**
+     * Checks if the email matches the specified pattern
+     *
+     * @param email The user's email
+     *
+     * @return True if the email specified is valid and false otherwise
+     */
     public static boolean isEmailValid(String email) {
         String expression = "(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|\"" +
                 "(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21\\x23-\\x5b\\x5d-\\x7f]|\\\\[\\x01-\\x09\\" +
@@ -233,14 +257,22 @@ public class CreateAccountFragment extends Fragment
         return matcher.matches();
     }
 
-    //Prints a message to the user in the form of a dialog
-    private void displayErrorMessage(int messageID) {
+
+    /**
+     * Creates and displays an Alert Dialog to the user in case of an error
+     *
+     * @param errorMessage The message to display the user
+     */
+    private void displayErrorMessage(String errorMessage) {
         builder.setTitle("Error Message");
-        builder.setMessage(messageID);
+        builder.setMessage(errorMessage);
         builder.show();
     }
 
-    //Updates the Button color if all the right conditions are met
+
+    /**
+     * Under the right conditions, calling this method will allow the button to be enabled
+     */
     private void updateButton() {
         if (!createAccountButton.isEnabled() && !firstNameEditText.getText().toString().isEmpty() && !lastNameEditText.getText().toString().isEmpty()
                 && !emailEditText.getText().toString().isEmpty() && !passwordEditText.getText().toString().isEmpty()
@@ -255,53 +287,79 @@ public class CreateAccountFragment extends Fragment
         }
     }
 
-    //Prints a message to the user in the form of a Toast
-    private void printToast(String message) {
-        Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show();
-    }
-
+    /**
+     * Sets the cognito user pool object created first in the container activity which is
+     * the area in which you create the user account to
+     *
+     * @param cognitoUserPool
+     */
     public void setCognitoUserPool(CognitoUserPool cognitoUserPool) {
         this.cognitoUserPool = cognitoUserPool;
     }
 
+    /**
+     * This method will not be called if there exists any fields that are empty
+     * Allows the user to create their account upon successful pre-requisites that include:
+     *  User email field must contain the right format
+     *  User password field must follow proper password guidelines
+     *  Confirm password must match the user's previously entered password
+     *
+     * @param view
+     */
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.create_account_button:
-                String emailAddress = emailEditText.getText().toString();
-                //First check if the email is valid
-                if (isEmailValid(emailEditText.getText().toString())) {
-                    String password = passwordEditText.getText().toString();
-                    //Check if the user follow the password guide line
-                    if (passwordGuidelineCheck(password)) {
-                        String confirmPassword = confirmPasswordEditText.getText().toString();
-                        //Check if password and confirm password is equal
-                        if (password.matches(confirmPassword)) {
-                            String firstName = firstNameEditText.getText().toString();
-                            String lastName = lastNameEditText.getText().toString();
-                            createUserAccount(firstName, lastName, emailAddress, password);
-                            progressBar.setVisibility(View.VISIBLE);
-                            //Hide the soft input keyboard
-                            View currentlyFocusedView = getActivity().getCurrentFocus();
-                            currentlyFocusedView.clearFocus();
-                            InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-                            imm.hideSoftInputFromWindow(currentlyFocusedView.getWindowToken(), 0);
-                        } else {
-                            displayErrorMessage(R.string.invalid_confirm_password);
-                        }
-                    } else {
-
-                        displayErrorMessage(R.string.incorrect_password_format);
-                    }
-                } else {
-                    displayErrorMessage(R.string.incorrect_email_format);
+                //Check if the email address field is properly formatted and display an error
+                //error message if the format is wrong
+                String emailAddress = emailEditText.getText().toString().toLowerCase();
+                if(!isEmailValid(emailAddress)) {
+                    displayErrorMessage("Email is not valid.");
+                    return;
                 }
+
+                //Check if the user password field is not empty and contains the proper format
+                //and displays an error message if the password does not meet the guidelines
+                String password = passwordEditText.getText().toString();
+                if(!passwordGuidelineCheck(password)) {
+                    displayErrorMessage("Password must contain a minimum of 8 characters and " +
+                            "the following : (a-z, A-Z, 0-9).");
+                    return;
+                }
+
+                //Makes sure that the confirm password is exactly the same as the password
+                //and displays an error message if the passwords do not equal
+                String confirmPassword = confirmPasswordEditText.getText().toString();
+                if(!confirmPassword.equals(password)) {
+                    displayErrorMessage("Passwords do not equal");
+                    return;
+                }
+
+                //Retrieves the first name and last name of the user from the edit boxes
+                String firstName = firstNameEditText.getText().toString();
+                String lastName = lastNameEditText.getText().toString();
+
+                //Everything is ok, begin creating the user account
+                createUserAccount(firstName, lastName, emailAddress, password);
+                //Make the progress bar appear to show that the application is still working
+                //but is in the process of completing a task
+                progressBar.setVisibility(View.VISIBLE);
+                //Hide the soft input keyboard from the user
+                View currentlyFocusedView = getActivity().getCurrentFocus();
+                InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(currentlyFocusedView.getWindowToken(), 0);
+
+
                 break;
         }
     }
 
+    /**
+     * Allows the Fragment activity to sent events to the container activity
+     *
+     * @param onAccountCreatedListener The listener implemented in the container activity
+     */
     public void setOnAccountCreatedListener(OnAccountCreatedListener onAccountCreatedListener) {
         this.onAccountCreatedListener = onAccountCreatedListener;
     }
 }
-

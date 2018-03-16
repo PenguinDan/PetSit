@@ -2,8 +2,10 @@ package edu.csulb.petsitter;
 
 import android.app.AlertDialog;
 import android.app.Fragment;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -18,6 +20,8 @@ import android.widget.TextView;
 
 import com.amazonaws.mobileconnectors.cognitoidentityprovider.CognitoDevice;
 import com.amazonaws.mobileconnectors.cognitoidentityprovider.CognitoUser;
+import com.amazonaws.mobileconnectors.cognitoidentityprovider.CognitoUserAttributes;
+import com.amazonaws.mobileconnectors.cognitoidentityprovider.CognitoUserDetails;
 import com.amazonaws.mobileconnectors.cognitoidentityprovider.CognitoUserPool;
 import com.amazonaws.mobileconnectors.cognitoidentityprovider.CognitoUserSession;
 import com.amazonaws.mobileconnectors.cognitoidentityprovider.continuations.AuthenticationContinuation;
@@ -25,6 +29,7 @@ import com.amazonaws.mobileconnectors.cognitoidentityprovider.continuations.Auth
 import com.amazonaws.mobileconnectors.cognitoidentityprovider.continuations.ChallengeContinuation;
 import com.amazonaws.mobileconnectors.cognitoidentityprovider.continuations.MultiFactorAuthenticationContinuation;
 import com.amazonaws.mobileconnectors.cognitoidentityprovider.handlers.AuthenticationHandler;
+import com.amazonaws.mobileconnectors.cognitoidentityprovider.handlers.GetDetailsHandler;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
@@ -55,13 +60,8 @@ public class LoginFragment extends Fragment
     private CognitoUser cognitoUser;
     private boolean isSigningIn;
     //Views
-    private Button normalLoginButton;
-    private SignInButton googleLoginButton;
-    private ImageButton facebookLoginButton;
     private EditText emailEditText;
     private EditText passwordEditText;
-    private TextView createAccountText;
-    private TextView forgotPasswordText;
     //Other Variables
     private AlertDialog alertDialog;
     //Interface
@@ -74,11 +74,36 @@ public class LoginFragment extends Fragment
         @Override
         public void onSuccess(CognitoUserSession userSession, CognitoDevice newDevice) {
             Log.d(TAG, "AuthenticationHandler->onSuccess: Logged in with :" + cognitoUser.getUserId());
-            //Dismiss the alert dialog
-            alertDialog.dismiss();
 
-            //Start the main activity
-            startMainActivity();
+            //Retrieve user information and store it inside of SharedPreferences
+            cognitoUser.getDetailsInBackground(new GetDetailsHandler() {
+                @Override
+                public void onSuccess(CognitoUserDetails cognitoUserDetails) {
+                    Log.d(TAG, "getDetailsInBackground-> onSuccess: Retrieving Cognito information");
+                    //Initialize the SharedPreferences object and choose the folder
+                    SharedPreferences sharedPreferences = getActivity().getSharedPreferences(CognitoHelper.COGNITO_INFO, Context.MODE_PRIVATE);
+                    SharedPreferences.Editor spEditor = sharedPreferences.edit();
+
+                    //Initialize object to retrieve user details
+                    CognitoUserAttributes cognitoUserAttributes = cognitoUserDetails.getAttributes();
+
+                    //Store the user details inside of Shared Preferences
+                    spEditor.putString(CognitoHelper.COGNITO_EMAIL, cognitoUserAttributes.getAttributes().get("email"));
+                    spEditor.putString(CognitoHelper.COGNITO_USER_NAME, cognitoUserAttributes.getAttributes().get("name"));
+                    spEditor.commit();
+
+                    //Dismiss the alert dialog
+                    alertDialog.dismiss();
+                    //Add that the current sign in provider is Cognito
+                    setCurrentSignInProvider(User.COGNITO_PROVIDER);
+                }
+
+                @Override
+                public void onFailure(Exception exception) {
+                    Log.w(TAG, "getDetailsInBackground-> onFailure: Unable to retrieve user information");
+                    exception.printStackTrace();
+                }
+            });
         }
 
         @Override
@@ -110,7 +135,7 @@ public class LoginFragment extends Fragment
     /**
      * Used to communicate with the Cognito User Pool login for normal logins
      */
-    private class CognitoHelper extends AsyncTask<String, Void, Void> {
+    private class CognitoAuthHelper extends AsyncTask<String, Void, Void> {
         @Override
         protected Void doInBackground(String... strings) {
             String userEmail = strings[0];
@@ -171,17 +196,13 @@ public class LoginFragment extends Fragment
         isSigningIn = false;
 
         //Initialize all of the views
-        normalLoginButton = getActivity().findViewById(R.id.button_normal_login);
-        facebookLoginButton = getActivity().findViewById(R.id.facebook_login_button);
-        googleLoginButton = getActivity().findViewById(R.id.google_login_button);
+        Button normalLoginButton = getActivity().findViewById(R.id.button_normal_login);
+        ImageButton facebookLoginButton = getActivity().findViewById(R.id.facebook_login_button);
+        SignInButton googleLoginButton = getActivity().findViewById(R.id.google_login_button);
         emailEditText = getActivity().findViewById(R.id.email_edit_text);
         passwordEditText = getActivity().findViewById(R.id.password_edit_text);
-        createAccountText = getActivity().findViewById(R.id.create_account_text);
-        forgotPasswordText = getActivity().findViewById(R.id.forgot_password_text);
-
-        //Debug values
-        emailEditText.setText("danielkimstudent@hotmail.com");
-        passwordEditText.setText("Isobarkim1");
+        TextView createAccountText = getActivity().findViewById(R.id.create_account_text);
+        TextView forgotPasswordText = getActivity().findViewById(R.id.forgot_password_text);
 
         //Set listeners for buttons
         normalLoginButton.setOnClickListener(this);
@@ -203,6 +224,7 @@ public class LoginFragment extends Fragment
             public void onSuccess(LoginResult loginResult) {
                 AccessToken accessToken = loginResult.getAccessToken();
                 Log.d(TAG, "FacebookCallback-> onSuccess: successfully logged in with " + accessToken.getUserId());
+                setCurrentSignInProvider(User.FACEBOOK_PROVIDER);
                 startMainActivity();
             }
 
@@ -314,6 +336,7 @@ public class LoginFragment extends Fragment
         try {
             GoogleSignInAccount account = completedTask.getResult(ApiException.class);
             Log.d(TAG, "Signed in with " + account.getId());
+            setCurrentSignInProvider(User.GOOGLE_PROVIDER);
             startMainActivity();
         } catch (ApiException exception) {
             Log.w(TAG, "handleSignInResult: failed code=" + exception.getStatusCode());
@@ -365,7 +388,7 @@ public class LoginFragment extends Fragment
             alertDialog = createErrorDialog("Email and password fields cannot be empty");
             return;
         }
-        CognitoHelper cognitoHelper = new CognitoHelper();
+        CognitoAuthHelper cognitoHelper = new CognitoAuthHelper();
         cognitoHelper.execute(userEmail, userPassword);
     }
 
@@ -389,6 +412,18 @@ public class LoginFragment extends Fragment
      */
     public void setCognitoUserPool(CognitoUserPool cognitoUserPool) {
         this.cognitoUserPool = cognitoUserPool;
+    }
+
+    /**
+     * Set the current sign in provider in the shared preferences folder
+     *
+     * @param provider The sign in provider used for the user authentication
+     */
+    private void setCurrentSignInProvider(String provider){
+        SharedPreferences sharedPreferences = getActivity().getSharedPreferences(User.USER_PREFERENCES, Context.MODE_PRIVATE);
+        SharedPreferences.Editor spEditor = sharedPreferences.edit();
+        spEditor.putString(User.USER_SIGN_IN_PROVIDER, provider);
+        spEditor.commit();
     }
 
 }

@@ -8,7 +8,6 @@ import android.util.Log;
 
 import com.amazonaws.mobileconnectors.cognitoidentityprovider.CognitoUser;
 import com.amazonaws.mobileconnectors.cognitoidentityprovider.CognitoUserPool;
-import com.amazonaws.regions.Regions;
 import com.facebook.AccessToken;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -29,13 +28,7 @@ public class SplashScreenActivity extends Activity {
         super.onCreate(savedInstanceState);
 
         //Initialize CognitoUserPool object
-        cognitoUserPool = new CognitoUserPool(
-                this,
-                getResources().getString(R.string.cognito_pool_id),
-                getResources().getString(R.string.application_client_id),
-                getResources().getString(R.string.application_client_secret),
-                Regions.US_WEST_2
-        );
+        cognitoUserPool = CognitoHelper.getCognitoUserPool(this);
 
         //Check if the user has already signed in before
         if (userIsSignedIn()) {

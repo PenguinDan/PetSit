@@ -7,14 +7,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
 import com.andexert.calendarlistview.library.DatePickerController;
-import com.andexert.calendarlistview.library.SimpleMonthAdapter;
 import com.andexert.calendarlistview.library.DayPickerView;
+import com.andexert.calendarlistview.library.SimpleMonthAdapter;
 
 import java.util.Calendar;
 import java.util.Date;
 
-import static com.andexert.calendarlistview.library.SimpleMonthAdapter.*;
+import static com.andexert.calendarlistview.library.SimpleMonthAdapter.CalendarDay;
 
 
 /**

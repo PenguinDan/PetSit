@@ -12,7 +12,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.amazonaws.mobileconnectors.cognitoidentityprovider.CognitoUser;
@@ -27,7 +26,6 @@ public class VerifyCodeFragment extends Fragment
     //Views
     private Button confirmCodeButton;
     private EditText codeInputEditText;
-    private TextView verifyCodeText;
     //Variables
     private CognitoUser cognitoUser;
     //Constants
@@ -48,7 +46,6 @@ public class VerifyCodeFragment extends Fragment
         confirmCodeButton = (Button) getActivity().findViewById(R.id.button_confirm_verification_code);
         confirmCodeButton.setEnabled(false);
         codeInputEditText = (EditText) getActivity().findViewById(R.id.edit_text_verify_code);
-        verifyCodeText = (TextView) getActivity().findViewById(R.id.text_verify_code);
 
         //Set listeners
         confirmCodeButton.setOnClickListener(this);
