@@ -123,7 +123,6 @@ public class LoginFragment extends Fragment
         private final int SRP_RADIX = 16;
         private String usernameInternal;
         private String secretHash;
-        private AlertDialog alertDialog;
         private boolean loginSuccess;
 
         @Override
@@ -261,15 +260,15 @@ public class LoginFragment extends Fragment
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
             Log.d(TAG, "onPostExecute");
-            alertDialog.dismiss();
+
+            dismissLoginDialog();
 
             if (!loginSuccess) {
                 Log.d(TAG, "onPostExecute: Login Failure");
-                AlertDialog errorDialog = createLoginErrorDialog();
+                AlertDialog errorDialog = createLoginErrorDialog("Username and password combination not found.");
                 errorDialog.show();
             } else {
                 Log.d(TAG, "onPostExecute: Login Success");
-
             }
         }
 
@@ -279,8 +278,8 @@ public class LoginFragment extends Fragment
 
             loginSuccess = false;
 
-            alertDialog = createLoginDialog();
-            alertDialog.show();
+            loginDialog = createLoginDialog();
+            loginDialog.show();
         }
     }
 
@@ -374,6 +373,12 @@ public class LoginFragment extends Fragment
         Intent intent = new Intent(getActivity(), MainActivityContainer.class);
         startActivity(intent);
         getActivity().finish();
+    }
+
+    public void dismissLoginDialog() {
+        if(loginDialog.isShowing()) {
+            loginDialog.dismiss();
+        }
     }
 
     /**
@@ -589,10 +594,10 @@ public class LoginFragment extends Fragment
         return alertDialogBuilder.create();
     }
 
-    private AlertDialog createLoginErrorDialog() {
+    private AlertDialog createLoginErrorDialog(String errorMessage) {
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
         alertDialogBuilder.setTitle("Error");
-        alertDialogBuilder.setMessage("Email and Password combination not found");
+        alertDialogBuilder.setMessage(errorMessage);
         alertDialogBuilder.setNeutralButton("Ok", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
