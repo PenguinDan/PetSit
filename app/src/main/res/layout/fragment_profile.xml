@@ -23,6 +23,7 @@
             app:layout_constraintTop_toTopOf="parent">
 
             <TextView
+                android:id="@+id/user_name_text_view"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Username"
@@ -30,6 +31,7 @@
                 android:textSize="32sp" />
 
             <TextView
+                android:id="@+id/view_edit_profile_text_view"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/view_and_edit_profile"
@@ -56,6 +58,7 @@
     </android.support.constraint.ConstraintLayout>
 
     <ImageView
+        android:id="@+id/profile_line_seperator_image_view_1"
         android:layout_width="match_parent"
         android:layout_height="@dimen/profile_line_seperator"
         android:layout_marginStart="20dp"
@@ -78,7 +81,6 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:layout_marginBottom="8dp"
-            android:layout_marginStart="20dp"
             android:layout_marginTop="8dp"
             android:text="@string/notifications"
             android:textColor="@color/black"
@@ -101,6 +103,7 @@
     </android.support.constraint.ConstraintLayout>
 
     <ImageView
+        android:id="@+id/profile_line_seperator_image_view_2"
         android:layout_width="match_parent"
         android:layout_height="@dimen/profile_line_seperator"
         android:layout_marginStart="20dp"
@@ -123,7 +126,6 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:layout_marginBottom="8dp"
-            android:layout_marginStart="20dp"
             android:layout_marginTop="8dp"
             android:text="@string/settings"
             android:textColor="@color/black"
@@ -146,6 +148,7 @@
     </android.support.constraint.ConstraintLayout>
 
     <ImageView
+        android:id="@+id/profile_line_seperator_image_view_3"
         android:layout_width="match_parent"
         android:layout_height="@dimen/profile_line_seperator"
         android:layout_marginStart="20dp"
@@ -168,7 +171,6 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:layout_marginBottom="8dp"
-            android:layout_marginStart="20dp"
             android:layout_marginTop="8dp"
             android:text="@string/become_a_host"
             android:textColor="@color/black"
@@ -191,6 +193,7 @@
     </android.support.constraint.ConstraintLayout>
 
     <ImageView
+        android:id="@+id/profile_line_seperator_image_view_4"
         android:layout_width="match_parent"
         android:layout_height="@dimen/profile_line_seperator"
         android:layout_marginStart="20dp"
@@ -213,7 +216,6 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:layout_marginBottom="8dp"
-            android:layout_marginStart="20dp"
             android:layout_marginTop="8dp"
             android:text="@string/feed_back"
             android:textColor="@color/black"
