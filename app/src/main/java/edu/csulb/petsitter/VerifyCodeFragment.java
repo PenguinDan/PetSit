@@ -86,6 +86,10 @@ public class VerifyCodeFragment extends Fragment
                     public void onSuccess() {
                         //Verification successful
                         Log.d(TAG, "onClick-> onSuccess: Confirmation successful, sending user to main activity");
+
+                        //Set that the user has authenticated with Cognito
+                        AuthHelper.setCurrentSignInProvider(getActivity(), AuthHelper.COGNITO_PROVIDER);
+
                         Intent intent = new Intent(getActivity(), MainActivityContainer.class);
                         startActivity(intent);
                         getActivity().finish();

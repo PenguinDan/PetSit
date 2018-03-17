@@ -43,7 +43,7 @@ public class UserAuthenticationContainer extends Activity
         setContentView(R.layout.activity_user_authentication_container);
 
         //Initialize variables
-        cognitoUserPool = CognitoHelper.getCognitoUserPool(this);
+        cognitoUserPool = AuthHelper.getCognitoUserPool(this);
 
         //Initialize Login Fragment
         loginFragment = new LoginFragment();

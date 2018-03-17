@@ -20,7 +20,6 @@ import android.widget.TextView;
 
 import com.amazonaws.mobileconnectors.cognitoidentityprovider.CognitoDevice;
 import com.amazonaws.mobileconnectors.cognitoidentityprovider.CognitoUser;
-import com.amazonaws.mobileconnectors.cognitoidentityprovider.CognitoUserAttributes;
 import com.amazonaws.mobileconnectors.cognitoidentityprovider.CognitoUserDetails;
 import com.amazonaws.mobileconnectors.cognitoidentityprovider.CognitoUserPool;
 import com.amazonaws.mobileconnectors.cognitoidentityprovider.CognitoUserSession;
@@ -80,22 +79,17 @@ public class LoginFragment extends Fragment
                 @Override
                 public void onSuccess(CognitoUserDetails cognitoUserDetails) {
                     Log.d(TAG, "getDetailsInBackground-> onSuccess: Retrieving Cognito information");
-                    //Initialize the SharedPreferences object and choose the folder
-                    SharedPreferences sharedPreferences = getActivity().getSharedPreferences(CognitoHelper.COGNITO_INFO, Context.MODE_PRIVATE);
-                    SharedPreferences.Editor spEditor = sharedPreferences.edit();
 
-                    //Initialize object to retrieve user details
-                    CognitoUserAttributes cognitoUserAttributes = cognitoUserDetails.getAttributes();
-
-                    //Store the user details inside of Shared Preferences
-                    spEditor.putString(CognitoHelper.COGNITO_EMAIL, cognitoUserAttributes.getAttributes().get("email"));
-                    spEditor.putString(CognitoHelper.COGNITO_USER_NAME, cognitoUserAttributes.getAttributes().get("name"));
-                    spEditor.commit();
+                    //Cache the user's information to be used for a quicker reference later
+                    AuthHelper.cacheUserInformation(getActivity(), cognitoUserDetails);
 
                     //Dismiss the alert dialog
                     alertDialog.dismiss();
                     //Add that the current sign in provider is Cognito
-                    setCurrentSignInProvider(User.COGNITO_PROVIDER);
+                    AuthHelper.setCurrentSignInProvider(getActivity(), AuthHelper.COGNITO_PROVIDER);
+
+                    //Start the main activity
+                    startMainActivity();
                 }
 
                 @Override
@@ -108,27 +102,29 @@ public class LoginFragment extends Fragment
 
         @Override
         public void getAuthenticationDetails(AuthenticationContinuation authenticationContinuation, String userId) {
-            Log.d(TAG, "CognitoHelper->doInBackground->getAuthenticationDetails");
+            Log.d(TAG, "AuthenticationHandler->getAuthenticationDetails");
         }
 
         @Override
         public void getMFACode(MultiFactorAuthenticationContinuation continuation) {
-            Log.d(TAG, "CognitoHelper->doInBackground->getMFACode");
+            Log.d(TAG, "AuthenticationHandler->getMFACode");
         }
 
         @Override
         public void authenticationChallenge(ChallengeContinuation continuation) {
-            Log.d(TAG, "CognitoHelper->doInBackground->authenticationChallenge");
+            Log.d(TAG, "AuthenticationHandler->authenticationChallenge");
         }
 
         @Override
         public void onFailure(Exception exception) {
-            Log.w(TAG, "CognitoHelper->doInBackground->onFailure");
+            Log.w(TAG, "AuthenticationHandler->onFailure");
             exception.printStackTrace();
 
+            //Dismiss the current alert dialog to show a new one
+            alertDialog.dismiss();
             //Create error dialog for the error case
-            AlertDialog errorDialog = createErrorDialog("Email and Password combination not found");
-            errorDialog.show();
+            alertDialog = createErrorDialog("Email and Password combination not found");
+            alertDialog.show();
         }
     };
 
@@ -141,9 +137,9 @@ public class LoginFragment extends Fragment
             String userEmail = strings[0];
             String userPassword = strings[1];
 
-            Log.d(TAG, "CognitoHelper: doInBackground");
-            Log.d(TAG, "CognitoHelper: email: " + userEmail);
-            Log.d(TAG, "CognitoHelper: password: " + userPassword);
+            Log.d(TAG, "AuthHelper: doInBackground");
+            Log.d(TAG, "AuthHelper: email: " + userEmail);
+            Log.d(TAG, "AuthHelper: password: " + userPassword);
 
             //Initiate AuthenticationDetails object to be used with the Authentication Flow
             //In this case, SRP Auth
@@ -224,7 +220,7 @@ public class LoginFragment extends Fragment
             public void onSuccess(LoginResult loginResult) {
                 AccessToken accessToken = loginResult.getAccessToken();
                 Log.d(TAG, "FacebookCallback-> onSuccess: successfully logged in with " + accessToken.getUserId());
-                setCurrentSignInProvider(User.FACEBOOK_PROVIDER);
+                AuthHelper.setCurrentSignInProvider(getActivity(), AuthHelper.FACEBOOK_PROVIDER);
                 startMainActivity();
             }
 
@@ -336,7 +332,7 @@ public class LoginFragment extends Fragment
         try {
             GoogleSignInAccount account = completedTask.getResult(ApiException.class);
             Log.d(TAG, "Signed in with " + account.getId());
-            setCurrentSignInProvider(User.GOOGLE_PROVIDER);
+            AuthHelper.setCurrentSignInProvider(getActivity(), AuthHelper.GOOGLE_PROVIDER);
             startMainActivity();
         } catch (ApiException exception) {
             Log.w(TAG, "handleSignInResult: failed code=" + exception.getStatusCode());
@@ -414,17 +410,6 @@ public class LoginFragment extends Fragment
         this.cognitoUserPool = cognitoUserPool;
     }
 
-    /**
-     * Set the current sign in provider in the shared preferences folder
-     *
-     * @param provider The sign in provider used for the user authentication
-     */
-    private void setCurrentSignInProvider(String provider){
-        SharedPreferences sharedPreferences = getActivity().getSharedPreferences(User.USER_PREFERENCES, Context.MODE_PRIVATE);
-        SharedPreferences.Editor spEditor = sharedPreferences.edit();
-        spEditor.putString(User.USER_SIGN_IN_PROVIDER, provider);
-        spEditor.commit();
-    }
 
 }
 

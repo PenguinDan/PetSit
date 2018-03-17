@@ -8,7 +8,6 @@ import android.util.Log;
 import com.facebook.AccessToken;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
-import com.google.android.gms.auth.GoogleAuthUtil;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 
@@ -35,9 +34,6 @@ public class User implements Serializable {
     //Constants
     private final static String TAG = User.class.getSimpleName();
     //Public Constants
-    public final static String GOOGLE_PROVIDER  = "google";
-    public final static String FACEBOOK_PROVIDER = "facebook";
-    public final static String COGNITO_PROVIDER = "cognito";
     public final static String USER_PREFERENCES = "user";
     public final static String USER_SIGN_IN_PROVIDER = "provider";
 
@@ -121,17 +117,17 @@ public class User implements Serializable {
             throw new RuntimeException("Sign in provider is null, user is not signed in");
         }
         switch(signInProvider) {
-            case GOOGLE_PROVIDER:{
+            case AuthHelper.GOOGLE_PROVIDER:{
                 Log.d(TAG, "retrieveUserInformation: Retrieving user's google information");
                 retrieveGoogleInformation(context);
             }
             break;
-            case FACEBOOK_PROVIDER: {
+            case AuthHelper.FACEBOOK_PROVIDER: {
                 Log.d(TAG, "retrieveUserInformation: Retrieving user's facebook information");
                 retrieveFacebookInformation();
             }
             break;
-            case COGNITO_PROVIDER: {
+            case AuthHelper.COGNITO_PROVIDER: {
                 Log.d(TAG, "retrieveUserInformation: Retrieveing user's cognito information");
                 retrieveCognitoInformation(context);
             }
@@ -148,7 +144,7 @@ public class User implements Serializable {
         GoogleSignInAccount googleAccount = GoogleSignIn.getLastSignedInAccount(context);
         email = googleAccount.getEmail();
         name = googleAccount.getDisplayName();
-        signInProvider = GOOGLE_PROVIDER;
+        signInProvider = AuthHelper.GOOGLE_PROVIDER;
         Log.d(TAG, "retrieveGoogleInformation: Finished retrieving Google information");
     }
 
@@ -165,7 +161,7 @@ public class User implements Serializable {
                         try {
                             name = object.getString("name");
                             email = object.getString("email");
-                            signInProvider = FACEBOOK_PROVIDER;
+                            signInProvider = AuthHelper.FACEBOOK_PROVIDER;
                             Log.d(TAG, "retrieveFacebookInformation: onCompleted: Finished retrieving Facebook information");
                         }catch(JSONException exception) {
                             Log.d(TAG, "retrieveFacebookInformation: failure");
@@ -187,13 +183,13 @@ public class User implements Serializable {
      */
     private static void retrieveCognitoInformation(Context context) {
         //Retrieve user's information from shared preferences
-        SharedPreferences sharedPreferences = context.getSharedPreferences(CognitoHelper.COGNITO_INFO, Context.MODE_PRIVATE);
-        name = sharedPreferences.getString(CognitoHelper.COGNITO_USER_NAME, null);
-        email = sharedPreferences.getString(CognitoHelper.COGNITO_EMAIL, null);
+        SharedPreferences sharedPreferences = context.getSharedPreferences(AuthHelper.COGNITO_INFO, Context.MODE_PRIVATE);
+        name = sharedPreferences.getString(AuthHelper.COGNITO_USER_NAME, null);
+        email = sharedPreferences.getString(AuthHelper.COGNITO_EMAIL, null);
         if(name == null || email == null) {
             throw new RuntimeException("Attempt to retrieve empty Cognito user details");
         }
-        signInProvider = COGNITO_PROVIDER;
+        signInProvider = AuthHelper.COGNITO_PROVIDER;
         Log.d(TAG, "retrieveCognitoInformation: Finished retrieving Cognito information");
     }
 
