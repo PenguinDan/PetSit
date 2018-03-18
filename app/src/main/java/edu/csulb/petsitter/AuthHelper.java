@@ -22,6 +22,8 @@ public class AuthHelper {
     public final static String GOOGLE_PROVIDER  = "google";
     public final static String FACEBOOK_PROVIDER = "facebook";
     public final static String COGNITO_PROVIDER = "cognito";
+    //Private Authentication Constants
+    private final static String LAST_USER_CACHE = "CognitoIdentityProviderCache";
 
     /**
      * User should not be able to generate this class
@@ -72,6 +74,20 @@ public class AuthHelper {
         spEditor.putString(AuthHelper.COGNITO_USER_NAME, name);
         //Commit the changes
         spEditor.commit();
+    }
+
+    public static void cacheCurrentSignedInUser(Context context, String userID) {
+        //Open shared preferences folder where the last signed in user is stored
+        final SharedPreferences csiCachedTokens = context
+                .getSharedPreferences(LAST_USER_CACHE, Context.MODE_PRIVATE);
+        //Set the client id variable
+        final String clientId = context.getString(R.string.application_client_id);
+        //Create the key to input the last signed in user
+        final String csiLastUserKey = "CognitoIdentityProvider." + clientId + ".LastAuthUser";
+
+        SharedPreferences.Editor editor = csiCachedTokens.edit();
+        editor.putString(csiLastUserKey, userID);
+        editor.apply();
     }
 
     /**

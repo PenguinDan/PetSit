@@ -55,10 +55,10 @@ public class SplashScreenActivity extends Activity {
             GoogleSignInAccount googleSignInAccount = GoogleSignIn.getLastSignedInAccount(this);
             Log.d(TAG, "userIsSignedIn: Google sign in: " + googleSignInAccount.getEmail());
             return true;
-//        } else if (cognitoUserPool.getCurrentUser() != null) {
-//            CognitoUser cognitoUser = cognitoUserPool.getCurrentUser();
-//            Log.d(TAG, "userIsSignedIn: Normal sign in: " + cognitoUser);
-//            return true;
+        } else if (cognitoUserPool.getCurrentUser().getUserId() != null) {
+            CognitoUser cognitoUser = cognitoUserPool.getCurrentUser();
+            Log.d(TAG, "userIsSignedIn: Normal sign in: " + cognitoUser.getUserId());
+            return true;
         } else if (AccessToken.getCurrentAccessToken() != null) {
             AccessToken facebookAccessToken = AccessToken.getCurrentAccessToken();
             Log.d(TAG, "userIsSignedIn: Facebook sign in: " + facebookAccessToken.getUserId());

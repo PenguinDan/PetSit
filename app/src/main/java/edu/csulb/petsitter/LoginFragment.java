@@ -138,8 +138,6 @@ public class LoginFragment extends Fragment
             String userPassword = strings[1];
 
             Log.d(TAG, "AuthHelper: doInBackground");
-            Log.d(TAG, "AuthHelper: email: " + userEmail);
-            Log.d(TAG, "AuthHelper: password: " + userPassword);
 
             //Initiate AuthenticationDetails object to be used with the Authentication Flow
             //In this case, SRP Auth

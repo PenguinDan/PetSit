@@ -2,6 +2,7 @@ package edu.csulb.petsitter;
 
 import android.app.Fragment;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.Editable;
@@ -89,7 +90,7 @@ public class VerifyCodeFragment extends Fragment
 
                         //Set that the user has authenticated with Cognito
                         AuthHelper.setCurrentSignInProvider(getActivity(), AuthHelper.COGNITO_PROVIDER);
-
+                        AuthHelper.cacheCurrentSignedInUser(getActivity(), cognitoUser.getUserId());
                         Intent intent = new Intent(getActivity(), MainActivityContainer.class);
                         startActivity(intent);
                         getActivity().finish();
