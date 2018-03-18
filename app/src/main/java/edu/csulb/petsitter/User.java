@@ -8,6 +8,7 @@ import android.util.Log;
 import com.facebook.AccessToken;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
+import com.facebook.Profile;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 
@@ -153,6 +154,7 @@ public class User implements Serializable {
      */
     private static void retrieveFacebookInformation() {
         AccessToken facebookAccessToken = AccessToken.getCurrentAccessToken();
+        Log.d(TAG, "retrieveFacebookInformation: userID = " + facebookAccessToken.getUserId());
         GraphRequest request = GraphRequest.newMeRequest(
                 facebookAccessToken,
                 new GraphRequest.GraphJSONObjectCallback() {
@@ -164,14 +166,16 @@ public class User implements Serializable {
                             signInProvider = AuthHelper.FACEBOOK_PROVIDER;
                             Log.d(TAG, "retrieveFacebookInformation: onCompleted: Finished retrieving Facebook information");
                         }catch(JSONException exception) {
-                            Log.d(TAG, "retrieveFacebookInformation: failure");
+                            Log.d(TAG, "retrieveFacebookInformation: failure, response code: " + response.getError());
                             exception.printStackTrace();
+                        } catch(Exception exception) {
+                            Log.d(TAG, "retrieveFacebookInformation: failure, response code: " + response.getError());
                         }
                     }
                 }
         );
         Bundle neededInformation = new Bundle();
-        neededInformation.putString("email", "name");
+        neededInformation.putString("fields", "name, email");
         request.setParameters(neededInformation);
         request.executeAsync();
     }
