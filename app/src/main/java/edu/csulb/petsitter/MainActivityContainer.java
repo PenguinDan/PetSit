@@ -1,22 +1,21 @@
 package edu.csulb.petsitter;
 
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.MenuItem;
 import android.widget.Button;
 
-public class MainActivityContainer extends AppCompatActivity {
-    //Constants
-    private final String TAG = MainActivityContainer.class.getSimpleName();
-    //Views
-    Button filterDateButton;
-    //Variables
-    private User user;
+import com.amazonaws.mobileconnectors.cognitoidentityprovider.CognitoUser;
+
+        public class MainActivityContainer extends AppCompatActivity {
+
+            Button filterDateButton;
+            //Cognito
+    private CognitoUser cognitoUser;
 
     //BottomNavigationBar item select listener
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener =
@@ -60,9 +59,6 @@ public class MainActivityContainer extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_activity_container);
         setUpBottomNavigationBar();
-
-        //Retrieve a User object from their sign in provider
-        user = User.getInstance(this);
 
     }
 
