@@ -63,7 +63,6 @@ public class MainActivityContainer extends AppCompatActivity {
 
         //Retrieve a User object from their sign in provider
         user = User.getInstance(this);
-
     }
 
     //Create bottomNavigationBar listener and set default selected item to findItem
