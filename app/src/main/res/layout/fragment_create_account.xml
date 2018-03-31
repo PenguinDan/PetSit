@@ -43,15 +43,29 @@
             android:hint="@string/email"
             android:inputType="textEmailAddress|textNoSuggestions" />
 
-        <EditText
-            android:id="@+id/password_edit_text"
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:layout_marginStart="8dp"
-            android:hint="@string/password"
-            android:inputType="textPassword|textNoSuggestions" />
+            android:orientation="horizontal">
 
+            <EditText
+                android:id="@+id/password_edit_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="8dp"
+                android:hint="@string/password"
+                android:inputType="textPassword|textNoSuggestions" />
+            <ImageView
+                android:id="@+id/password_match_guide_image_view"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginStart="-40dp"
+                android:clickable="false"
+                android:visibility="gone"
+                android:src="@drawable/red_x_mark_icon"/>
+        </LinearLayout>
         <TextView
             android:id="@+id/invalid_password_guide_text_view"
             android:layout_width="match_parent"
@@ -66,15 +80,28 @@
             android:textColor="@color/invalid_password_error"
             android:textSize="11sp"
             android:visibility="gone" />
-
-        <EditText
-            android:id="@+id/confirm_password_edit_text"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:layout_marginStart="8dp"
-            android:hint="@string/confirm_password"
-            android:inputType="textPassword|textNoSuggestions" />
+            android:orientation="horizontal">
+
+            <EditText
+                android:id="@+id/confirm_password_edit_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="8dp"
+                android:hint="@string/confirm_password"
+                android:inputType="textPassword|textNoSuggestions" />
+
+            <ImageView
+                android:id="@+id/confirm_password_match_guide_image_view"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginStart="-40dp"/>
+
+        </LinearLayout>
+
 
         <Button
             android:id="@+id/create_account_button"

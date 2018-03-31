@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".HostMainPageFragment">
+
+    <TextView
+        android:id="@+id/host_main_page_title_text_view"
+        android:layout_width="414dp"
+        android:layout_height="wrap_content"
+        android:background="@color/application_main_color"
+        android:paddingBottom="40dp"
+        android:paddingLeft="20dp"
+        android:paddingTop="35dp"
+        android:text="@string/main_message"
+        android:textColor="@color/white"
+        android:textSize="34sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <LinearLayout
+        android:id="@+id/start_basic_linear_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="20dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="20dp"
+        android:clickable="false"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/host_main_page_title_text_view">
+
+        <TextView
+            android:id="@+id/start_basic_title_message_text_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clickable="false"
+            android:text="@string/basic_title_message"
+            android:textColor="@color/black"
+            android:textSize="24sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/start_basic_message_text_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/basic_message"
+            android:textSize="20dp" />
+
+        <Button
+            android:id="@+id/start_basic_continue_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/application_main_color"
+            android:layout_marginTop="15dp"
+            android:layout_marginBottom="15dp"
+            android:paddingBottom="12dp"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:paddingTop="12dp"
+            android:text="@string/continue_word"
+            android:textColor="@color/white"
+            android:textSize="23dp" />
+        
+        <View
+            android:layout_marginTop="15dp"
+            android:layout_marginBottom="15dp"
+            style="@style/Divider"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/show_off_your_space_linear_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="20dp"
+        android:layout_marginStart="20dp"
+        android:clickable="false"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/start_basic_linear_layout">
+
+        <TextView
+            android:id="@+id/show_off_space_title_text_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clickable="false"
+            android:text="@string/show_off_space_title"
+            android:textColor="@color/black"
+            android:textSize="24sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/show_off_space_body_text_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/show_off_space_body"
+            android:textSize="20dp" />
+
+        <Button
+            android:id="@+id/show_off_space_continue_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/application_main_color"
+            android:layout_marginTop="15dp"
+            android:layout_marginBottom="15dp"
+            android:paddingBottom="12dp"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:paddingTop="12dp"
+            android:text="@string/continue_word"
+            android:textColor="@color/white"
+            android:textSize="23dp"
+            android:visibility="gone"/>
+
+        <View
+            style="@style/Divider"
+            android:layout_marginBottom="15dp"
+            android:layout_marginTop="15dp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/get_ready_linear_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="20dp"
+        android:layout_marginStart="20dp"
+        android:clickable="false"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/show_off_your_space_linear_layout">
+
+        <TextView
+            android:id="@+id/get_ready_title_text_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clickable="false"
+            android:text="@string/ready_for_animals_title"
+            android:textColor="@color/black"
+            android:textSize="24sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/get_ready_body_text_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/ready_for_animals_body"
+            android:textSize="20dp" />
+
+        <Button
+            android:id="@+id/get_ready_continue_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/application_main_color"
+            android:layout_marginTop="15dp"
+            android:layout_marginBottom="15dp"
+            android:paddingBottom="12dp"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:paddingTop="12dp"
+            android:text="@string/continue_word"
+            android:textColor="@color/white"
+            android:textSize="23dp"
+            android:visibility="gone"/>
+
+        <View
+            style="@style/Divider"
+            android:layout_marginBottom="15dp"
+            android:layout_marginTop="15dp" />
+    </LinearLayout>
+
+</android.support.constraint.ConstraintLayout>

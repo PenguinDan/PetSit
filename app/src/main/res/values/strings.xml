@@ -58,6 +58,22 @@
     <string name="version">\t\t\tVersion 1.0</string>
     <string name="log_out">\t\t\tLog out</string>
 
+    <!-- String related to all host -->
+    <string name="host_title_message">Earn money as an \nPetSit host</string>
+    <string name="main_message">Let\'s get you ready \nto host.</string>
+    <string name="basic_title_message">Start with the basics</string>
+    <string name="basic_message">We\'ll ask you about your house and amenities.</string>
+    <string name="show_off_space_title">Show off your space</string>
+    <string name="show_off_space_body">Upload picture and describe your place to potential animals.</string>
+    <string name="ready_for_animals_title">Get ready for animals</string>
+    <string name="ready_for_animals_body">Set up your price, calendar, and \nbooking settings.</string>
+    <string name="place_info_title">Which of these sounds most like your place?</string>
+    <string name="property_type">Now choose a property type</string>
+    <string name="narrow_place">First, let\'s narrow things down</string>
+    <string name="potential_monthly_earning">You could earn $$$$ \nper month</string>
+    <string name="get_started">Get started</string>
+
+
     <!-- Other Strings -->
     <string name="wallpaper">wallpaper</string>
     <string name="confirm_text">Confirm</string>
@@ -76,6 +92,10 @@
     <string name="clear">Clear</string>
     <string name="edit_profile">Edit profile</string>
     <string name="change_password">Change password</string>
+    <string name="continue_word">Continue</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 
 </resources>
