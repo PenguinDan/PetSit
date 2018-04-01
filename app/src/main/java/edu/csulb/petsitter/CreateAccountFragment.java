@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -44,6 +45,8 @@ public class CreateAccountFragment extends Fragment
     private TextView invalidPasswordGuideTextView;
     private ProgressBar progressBar;
     private Button createAccountButton;
+    private ImageView passwordMatchGuideImageView;
+    private ImageView confirmPasswordMatchGuideImageView;
     //Constants
     private String TAG = "CreateAccountFragment";
     //Variables
@@ -146,6 +149,11 @@ public class CreateAccountFragment extends Fragment
 
         //Attach Listeners
         createAccountButton.setOnClickListener(this);
+        firstNameEditText.setOnClickListener(this);
+        lastNameEditText.setOnClickListener(this);
+        emailEditText.setOnClickListener(this);
+        passwordEditText.setOnClickListener(this);
+        confirmPasswordEditText.setOnClickListener(this);
         firstNameEditText.addTextChangedListener(textWatcher);
         lastNameEditText.addTextChangedListener(textWatcher);
         emailEditText.addTextChangedListener(textWatcher);
@@ -353,8 +361,121 @@ public class CreateAccountFragment extends Fragment
                 InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(currentlyFocusedView.getWindowToken(), 0);
 
-
                 break;
+
+            case R.id.first_name_edit_text:
+                if(!isEditTextEmpty(passwordEditText)){
+                    if(isTextMatch(passwordEditText, confirmPasswordEditText)){
+                        setPasswordGuideImage(true);
+                    }
+                    else{
+                        setPasswordGuideImage(false);
+                    }
+                }
+                break;
+
+            case R.id.last_name_edit_text:
+                if(!isEditTextEmpty(passwordEditText)){
+                    if(isTextMatch(passwordEditText, confirmPasswordEditText)){
+                        setPasswordGuideImage(true);
+                    }
+                    else{
+                        setPasswordGuideImage(false);
+                    }
+                }
+                break;
+
+            case R.id.email_edit_text:
+                if(!isEditTextEmpty(passwordEditText)){
+                    if(isTextMatch(passwordEditText, confirmPasswordEditText)){
+                        setPasswordGuideImage(true);
+                    }
+                    else{
+                        setPasswordGuideImage(false);
+                    }
+                }
+                break;
+
+            case R.id.password_edit_text:
+                if(!isEditTextEmpty(passwordEditText)){
+                    if(isTextMatch(passwordEditText, confirmPasswordEditText)){
+                        setPasswordGuideImage(true);
+                    }
+                    else{
+                        setPasswordGuideImage(false);
+                    }
+                }
+                break;
+
+            case R.id.confirm_password_edit_text:
+                if(!isEditTextEmpty(passwordEditText)){
+                    if(isTextMatch(passwordEditText, confirmPasswordEditText)){
+                        setPasswordGuideImage(true);
+                    }
+                    else{
+                        setPasswordGuideImage(false);
+                    }
+                }
+                break;
+        }
+    }
+
+    /**
+     * Check weather the edit text field is empty or not
+     * @param currEditText The edit text field that is currently checking
+     * @return true if the passwordEditText is empty or false if the passwordEditText
+     * is not empty
+     */
+    public boolean isEditTextEmpty(EditText currEditText){
+        if(currEditText.getText().toString().trim().equals("")){
+            return false;
+        }
+        else{
+            return true;
+        }
+    }
+
+    /**
+     * Check to see weather the two edit text field equal to each other
+     * @param firstText The first text field
+     * @param secondText The second text field
+     * @return true if both edit text field contain the same text
+     * or false if one of the text field is different
+     *
+     */
+    public boolean isTextMatch(EditText firstText, EditText secondText){
+        if(firstText.getText().equals(secondText.getText())){
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+
+    /**
+     *Display the password guide image
+     *@param passwordMatch A flag that is use to determine which image to display
+     */
+    public void setPasswordGuideImage(boolean passwordMatch){
+        if(passwordMatch){
+            if(passwordMatchGuideImageView.getVisibility() == View.GONE){
+                passwordMatchGuideImageView.setVisibility(View.VISIBLE);
+            }
+            if(confirmPasswordMatchGuideImageView.getVisibility() == View.GONE){
+                confirmPasswordMatchGuideImageView.setVisibility(View.VISIBLE);
+            }
+            passwordMatchGuideImageView.setImageResource(R.drawable.green_check_mark_icon);
+            confirmPasswordMatchGuideImageView.setImageResource(R.drawable.green_check_mark_icon);
+        }
+        else{
+            if(passwordMatchGuideImageView.getVisibility() == View.GONE){
+                passwordMatchGuideImageView.setVisibility(View.VISIBLE);
+            }
+            if(confirmPasswordMatchGuideImageView.getVisibility() == View.GONE){
+                confirmPasswordMatchGuideImageView.setVisibility(View.VISIBLE);
+            }
+            passwordMatchGuideImageView.setImageResource(R.drawable.red_x_mark_icon);
+            confirmPasswordMatchGuideImageView.setImageResource(R.drawable.red_x_mark_icon);
         }
     }
 

@@ -48,12 +48,12 @@ public class SplashScreenActivity extends Activity {
                     Log.d(TAG, "onComplete : User is signed in with " +
                     authResults.getIdentityManager().getCurrentIdentityProvider().getDisplayName());
                     //Begin the main activity because the user is already signed in
-                    Intent intent = new Intent(SplashScreenActivity.this, HostActivity.class);
+                    Intent intent = new Intent(SplashScreenActivity.this, UserAuthenticationContainer.class);
                     startActivity(intent);
                 } else {
                     Log.d(TAG, "onComplete : User is not signed in.");
                     //Begin the login activity where the user has to sign in
-                    Intent intent = new Intent(SplashScreenActivity.this, HostActivity.class);
+                    Intent intent = new Intent(SplashScreenActivity.this, UserAuthenticationContainer.class);
                     //intent.setAction(UserAuthenticationContainer.LOGIN_USER_ACTION);
                     startActivity(intent);
                 }

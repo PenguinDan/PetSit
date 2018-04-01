@@ -10,7 +10,7 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
@@ -21,7 +21,7 @@
                 android:id="@+id/first_name_edit_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:ems="7"
+                android:ems="8"
                 android:hint="@string/first_name"
                 android:inputType="textPersonName|textNoSuggestions" />
 
@@ -29,10 +29,11 @@
                 android:id="@+id/last_name_edit_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
                 android:ems="8"
                 android:hint="@string/last_name"
                 android:inputType="textPersonName|textNoSuggestions" />
-        </LinearLayout>
+        </RelativeLayout>
 
         <EditText
             android:id="@+id/email_edit_text"
@@ -44,7 +45,8 @@
             android:inputType="textEmailAddress|textNoSuggestions" />
 
 
-        <LinearLayout
+        <RelativeLayout
+            android:id="@+id/password_relative_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
@@ -57,15 +59,18 @@
                 android:layout_marginStart="8dp"
                 android:hint="@string/password"
                 android:inputType="textPassword|textNoSuggestions" />
+
             <ImageView
                 android:id="@+id/password_match_guide_image_view"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_marginStart="-40dp"
+                android:layout_height="wrap_content"
+                android:layout_alignRight="@id/password_edit_text"
+                android:layout_centerVertical="true"
                 android:clickable="false"
-                android:visibility="gone"
-                android:src="@drawable/red_x_mark_icon"/>
-        </LinearLayout>
+                android:src="@drawable/red_x_mark_icon"
+                android:visibility="gone" />
+        </RelativeLayout>
+
         <TextView
             android:id="@+id/invalid_password_guide_text_view"
             android:layout_width="match_parent"
@@ -80,7 +85,9 @@
             android:textColor="@color/invalid_password_error"
             android:textSize="11sp"
             android:visibility="gone" />
-        <LinearLayout
+
+        <RelativeLayout
+            android:id="@+id/confirm_password_relative_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
@@ -97,10 +104,12 @@
             <ImageView
                 android:id="@+id/confirm_password_match_guide_image_view"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_marginStart="-40dp"/>
+                android:layout_height="wrap_content"
+                android:layout_alignRight="@id/confirm_password_edit_text"
+                android:layout_centerVertical="true"
+                android:clickable="false"/>
 
-        </LinearLayout>
+        </RelativeLayout>
 
 
         <Button
